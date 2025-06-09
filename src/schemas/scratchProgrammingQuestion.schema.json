@@ -1,0 +1,31 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scratch Programming Question",
+  "description": "Schema for a Scratch-like block-based programming question.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "scratch_programming"
+    },
+    "toolboxDefinition": {
+      "type": "string",
+      "description": "XML string defining the Scratch-like toolbox (still Blockly XML format)."
+    },
+    "initialWorkspace": {
+      "type": "string",
+      "description": "Optional XML string for the initial state of the workspace."
+    },
+    "solutionWorkspaceXML": {
+      "type": "string",
+      "description": "XML string of the target solution for basic comparison."
+    }
+  },
+  "required": [
+    "toolboxDefinition"
+  ],
+  "additionalProperties": false
+}

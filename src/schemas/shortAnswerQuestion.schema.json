@@ -1,0 +1,28 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Short Answer Question",
+  "description": "Schema for a short answer question.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "short_answer"
+    },
+    "acceptedAnswers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of acceptable string answers."
+    },
+    "isCaseSensitive": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "acceptedAnswers"
+  ],
+  "additionalProperties": false
+}

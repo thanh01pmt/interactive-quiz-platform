@@ -1,0 +1,28 @@
+
+{
+  "id": "dnd_sample_001",
+  "questionType": "drag_and_drop",
+  "prompt": "Match the animal to its habitat.",
+  "points": 12,
+  "explanation": "Polar bears live in the Arctic, lions in grasslands (savannas), and monkeys in jungles.",
+  "learningObjective": "Associate animals with their common habitats.",
+  "difficulty": "medium",
+  "category": "Biology",
+  "topic": "Animal Habitats",
+  "draggableItems": [
+    { "id": "dnd_item_bear", "content": "Polar Bear" },
+    { "id": "dnd_item_lion", "content": "Lion" },
+    { "id": "dnd_item_monkey", "content": "Monkey" }
+  ],
+  "dropZones": [
+    { "id": "dnd_zone_arctic", "label": "Arctic" },
+    { "id": "dnd_zone_jungle", "label": "Jungle" },
+    { "id": "dnd_zone_grassland", "label": "Grassland" }
+  ],
+  "answerMap": [
+    { "draggableId": "dnd_item_bear", "dropZoneId": "dnd_zone_arctic" },
+    { "draggableId": "dnd_item_lion", "dropZoneId": "dnd_zone_grassland" },
+    { "draggableId": "dnd_item_monkey", "dropZoneId": "dnd_zone_jungle" }
+  ],
+  "backgroundImageUrl": "https://example.com/images/habitats_background.png"
+}

@@ -1,0 +1,53 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Hotspot Question",
+  "description": "Schema for a hotspot question where user clicks on an image.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "hotspot"
+    },
+    "imageUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the image to be displayed."
+    },
+    "imageAltText": {
+      "type": "string",
+      "description": "Alternative text for the image, for accessibility."
+    },
+    "hotspots": {
+      "type": "array",
+      "description": "Defined clickable areas on the image.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "shape": { "type": "string", "enum": ["rect", "circle"] },
+          "coords": {
+            "type": "array",
+            "items": { "type": "number" },
+            "description": "For rect: [x, y, width, height] as %; For circle: [cx, cy, radius] as %"
+          },
+          "description": { "type": "string", "description": "Optional description for the hotspot area."}
+        },
+        "required": ["id", "shape", "coords"]
+      }
+    },
+    "correctHotspotIds": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of the correct hotspot(s) to click."
+    }
+  },
+  "required": [
+    "imageUrl",
+    "hotspots",
+    "correctHotspotIds"
+  ],
+  "additionalProperties": false
+}

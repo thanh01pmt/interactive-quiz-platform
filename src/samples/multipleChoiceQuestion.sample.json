@@ -1,0 +1,23 @@
+
+{
+  "id": "mcq_sample_001",
+  "questionType": "multiple_choice",
+  "prompt": "What is the main component of Earth's atmosphere?",
+  "points": 10,
+  "explanation": "Nitrogen makes up about 78% of Earth's atmosphere, while oxygen is about 21%.",
+  "learningObjective": "Identify the primary gases in Earth's atmosphere.",
+  "glossary": ["Atmosphere", "Nitrogen", "Oxygen"],
+  "bloomLevel": "Remembering",
+  "difficulty": "easy",
+  "category": "Science",
+  "topic": "Earth Science - Atmosphere",
+  "gradeBand": "Middle School",
+  "contextCode": "SCI-ES-ATM-001",
+  "options": [
+    { "id": "mcq_opt_1a", "text": "Oxygen" },
+    { "id": "mcq_opt_1b", "text": "Nitrogen" },
+    { "id": "mcq_opt_1c", "text": "Carbon Dioxide" },
+    { "id": "mcq_opt_1d", "text": "Argon" }
+  ],
+  "correctAnswerId": "mcq_opt_1b"
+}

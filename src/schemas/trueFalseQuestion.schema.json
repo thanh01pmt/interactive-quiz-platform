@@ -1,0 +1,23 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "True/False Question",
+  "description": "Schema for a true/false quiz question.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "true_false"
+    },
+    "correctAnswer": {
+      "type": "boolean",
+      "description": "The correct answer (true or false)."
+    }
+  },
+  "required": [
+    "correctAnswer"
+  ],
+  "additionalProperties": false
+}

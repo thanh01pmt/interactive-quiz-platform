@@ -1,0 +1,14 @@
+
+{
+  "id": "num_sample_001",
+  "questionType": "numeric",
+  "prompt": "What is the boiling point of water in Celsius at standard atmospheric pressure?",
+  "points": 7,
+  "explanation": "Water boils at 100 degrees Celsius (212 degrees Fahrenheit) at standard atmospheric pressure.",
+  "learningObjective": "Know the boiling point of water in Celsius.",
+  "difficulty": "easy",
+  "category": "Physics",
+  "topic": "Thermodynamics",
+  "answer": 100,
+  "tolerance": 0.5
+}

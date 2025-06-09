@@ -1,0 +1,63 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fill In The Blanks Question",
+  "description": "Schema for a fill-in-the-blanks question.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "fill_in_the_blanks"
+    },
+    "segments": {
+      "type": "array",
+      "description": "Segments of text and blanks that form the question.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["text", "blank"] },
+          "content": { "type": "string", "description": "Text content for 'text' segments." },
+          "id": { "type": "string", "description": "Unique ID for 'blank' segments." }
+        },
+        "required": ["type"],
+        "if": {
+          "properties": { "type": { "const": "blank" } }
+        },
+        "then": {
+          "required": ["id"]
+        },
+        "else": {
+          "required": ["content"]
+        }
+      }
+    },
+    "answers": {
+      "type": "array",
+      "description": "Defines the correct answers for each blank.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "blankId": { "type": "string", "description": "ID of the blank this answer corresponds to." },
+          "acceptedValues": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of accepted string values for the blank."
+          }
+        },
+        "required": ["blankId", "acceptedValues"]
+      }
+    },
+    "isCaseSensitive": {
+      "type": "boolean",
+      "description": "Whether the answers are case-sensitive.",
+      "default": false
+    }
+  },
+  "required": [
+    "segments",
+    "answers"
+  ],
+  "additionalProperties": false
+}

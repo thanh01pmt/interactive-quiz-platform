@@ -1,0 +1,14 @@
+
+{
+  "id": "sa_sample_001",
+  "questionType": "short_answer",
+  "prompt": "What is the chemical symbol for Gold?",
+  "points": 8,
+  "explanation": "The chemical symbol for Gold is Au, derived from its Latin name 'aurum'.",
+  "learningObjective": "Recall common chemical symbols.",
+  "difficulty": "medium",
+  "category": "Chemistry",
+  "topic": "Elements and Symbols",
+  "acceptedAnswers": ["Au", "au"],
+  "isCaseSensitive": false
+}

@@ -1,0 +1,20 @@
+
+{
+  "id": "seq_sample_001",
+  "questionType": "sequence",
+  "prompt": "Arrange the following historical periods in chronological order (earliest to latest).",
+  "points": 15,
+  "explanation": "The correct order is: Stone Age, Bronze Age, Iron Age, Middle Ages, Renaissance.",
+  "learningObjective": "Understand the chronological order of major historical periods.",
+  "difficulty": "medium",
+  "category": "History",
+  "topic": "Historical Periods",
+  "items": [
+    { "id": "seq_item_bronze", "content": "Bronze Age" },
+    { "id": "seq_item_middle", "content": "Middle Ages" },
+    { "id": "seq_item_stone", "content": "Stone Age" },
+    { "id": "seq_item_renaissance", "content": "Renaissance" },
+    { "id": "seq_item_iron", "content": "Iron Age" }
+  ],
+  "correctOrder": ["seq_item_stone", "seq_item_bronze", "seq_item_iron", "seq_item_middle", "seq_item_renaissance"]
+}
