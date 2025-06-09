@@ -9,7 +9,7 @@ interface QuestionListProps {
   onEditQuestion: (question: QuizQuestion, index: number) => void;
   onDeleteQuestion: (index: number) => void;
   onOrderChange: (newOrderedQuestions: QuizQuestion[]) => void;
-  onOpenAIGenerator: () => void; 
+  onOpenAIGenerator: () => void;
 }
 
 const questionTypeOptions: { value: QuestionTypeStrings; label: string }[] = [
@@ -33,7 +33,7 @@ export const QuestionList: React.FC<QuestionListProps> = ({
   onEditQuestion,
   onDeleteQuestion,
   onOpenAIGenerator,
-  onOrderChange, 
+  onOrderChange,
 }) => {
   const [selectedNewQuestionType, setSelectedNewQuestionType] = useState<QuestionTypeStrings>('multiple_choice');
 
@@ -94,8 +94,8 @@ export const QuestionList: React.FC<QuestionListProps> = ({
       ) : (
         <ul className="space-y-3">
           {questions.map((q, index) => (
-            <li 
-              key={q.id || `q-${index}`} 
+            <li
+              key={q.id || `q-${index}`}
               className="p-4 bg-slate-700 rounded-md shadow flex justify-between items-center cursor-grab active:cursor-grabbing"
               draggable
               onDragStart={() => handleDragStart(index)}

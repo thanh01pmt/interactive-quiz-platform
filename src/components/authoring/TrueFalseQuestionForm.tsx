@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { TrueFalseQuestion, BaseQuestion } from '../../types';
-import { BaseQuestionFormFields } from './BaseQuestionFormFields'; // Import if using shared base fields
+// import { BaseQuestionFormFields } from './BaseQuestionFormFields'; // Not used in this version
 
 interface TrueFalseQuestionFormProps {
-  question: TrueFalseQuestion; 
+  question: TrueFalseQuestion;
   onQuestionChange: (updatedQuestion: TrueFalseQuestion) => void;
 }
 
 // Define editable fields for TrueFalseQuestion, including those from BaseQuestion
-type EditableBaseKeys = keyof Omit<BaseQuestion, 'id' | 'questionType'>; // All keys from BaseQuestion except id and questionType
+type EditableBaseKeys = keyof Omit<BaseQuestion, 'id' | 'questionType'>;
 type TrueFalseSpecificEditableFields = 'correctAnswer';
 // Special handling for glossary input as a single string
 type TrueFalseFormField = EditableBaseKeys | TrueFalseSpecificEditableFields | 'glossary_string';
@@ -19,8 +19,6 @@ export const TrueFalseQuestionForm: React.FC<TrueFalseQuestionFormProps> = ({
   question,
   onQuestionChange,
 }) => {
-  // Use BaseQuestionFormFields for base properties if it handles them uniformly
-  // Or manage all state locally if more control is needed per form:
   const [prompt, setPrompt] = useState(question.prompt || '');
   const [points, setPoints] = useState(question.points === undefined ? 10 : question.points);
   const [correctAnswer, setCorrectAnswer] = useState(question.correctAnswer || false);
@@ -53,7 +51,6 @@ export const TrueFalseQuestionForm: React.FC<TrueFalseQuestionFormProps> = ({
   }, [question]);
 
   const handleQuestionPropertyChange = (field: TrueFalseFormField, value: any) => {
-    // Create a mutable copy of the question
     const updatedQuestion: TrueFalseQuestion = { ...question };
 
     switch (field) {
@@ -71,31 +68,25 @@ export const TrueFalseQuestionForm: React.FC<TrueFalseQuestionFormProps> = ({
         case 'course': updatedQuestion.course = String(value); break;
         case 'correctAnswer': updatedQuestion.correctAnswer = typeof value === 'boolean' ? value : false; break;
         default:
-            // This ensures that if TrueFalseFormField is extended, we get a compile-time error here
-            // if a case is missed, because `field` would not be `never`.
-            const _exhaustiveCheck: never = field;
+            const _exhaustiveCheck: never = field; // This check should now pass if all fields are covered
             console.warn(`Unhandled field in TrueFalseQuestionForm: ${_exhaustiveCheck}`);
-            return; 
+            return;
     }
     onQuestionChange(updatedQuestion);
   };
-  
+
   const handleLocalStateChange = (
-    stateSetter: React.Dispatch<React.SetStateAction<any>>, 
-    fieldName: TrueFalseFormField, 
+    stateSetter: React.Dispatch<React.SetStateAction<any>>,
+    fieldName: TrueFalseFormField,
     newValue: any
   ) => {
-    stateSetter(newValue); 
-    handleQuestionPropertyChange(fieldName, newValue); 
+    stateSetter(newValue);
+    handleQuestionPropertyChange(fieldName, newValue);
   };
 
 
   return (
     <div className="space-y-4 text-sm">
-      {/* If using BaseQuestionFormFields, pass relevant props: */}
-      {/* <BaseQuestionFormFields question={question} onBaseChange={(k, v) => handleQuestionPropertyChange(k as EditableBaseKeys, v)} /> */}
-      
-      {/* Or render fields directly: */}
       <div>
         <label htmlFor={`${question.id}_prompt`} className="block font-medium text-sky-300 mb-1">Prompt</label>
         <textarea
@@ -144,7 +135,7 @@ export const TrueFalseQuestionForm: React.FC<TrueFalseQuestionFormProps> = ({
           className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:ring-sky-500 focus:border-sky-500"
         />
       </div>
-      
+
       <div>
         <label htmlFor={`${question.id}_learningObjective`} className="block font-medium text-sky-300 mb-1">Learning Objective (Optional)</label>
         <input
@@ -179,7 +170,6 @@ export const TrueFalseQuestionForm: React.FC<TrueFalseQuestionFormProps> = ({
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
-            {/* Allow custom string difficulty if it's already set and not one of the standard */}
             {typeof difficulty === 'string' && !['easy', 'medium', 'hard'].includes(difficulty) && (
               <option value={difficulty}>{difficulty}</option>
             )}

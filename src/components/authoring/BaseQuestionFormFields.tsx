@@ -3,7 +3,7 @@ import React from 'react';
 import { BaseQuestion } from '../../types';
 
 interface BaseQuestionFormFieldsProps {
-  question: Partial<BaseQuestion>; 
+  question: Partial<BaseQuestion>;
   onBaseChange: <K extends keyof BaseQuestion>(field: K, value: BaseQuestion[K]) => void;
 }
 
@@ -17,17 +17,16 @@ export const BaseQuestionFormFields: React.FC<BaseQuestionFormFieldsProps> = ({ 
     } else if (name === 'glossary') {
       processedValue = value.split('\n').map(s => s.trim()).filter(Boolean);
     } else if (name === 'difficulty' && !['easy', 'medium', 'hard'].includes(value)) {
-      // For custom difficulty, keep it as string; otherwise, it's one of the enum-like values.
-      // No specific processing needed here beyond what the select provides.
+      // For custom difficulty, keep it as string
     }
-    
+
     onBaseChange(name as keyof BaseQuestion, processedValue);
   };
-  
+
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let numValue = parseInt(e.target.value, 10);
     if (isNaN(numValue) || numValue < 0) {
-      numValue = 0; // Default to 0 if invalid or negative
+      numValue = 0;
     }
     onBaseChange('points', numValue);
   };
@@ -53,13 +52,13 @@ export const BaseQuestionFormFields: React.FC<BaseQuestionFormFieldsProps> = ({ 
           type="number"
           id={`${question.id}_points`}
           name="points"
-          value={question.points === undefined ? 0 : question.points} // Handle undefined case
+          value={question.points === undefined ? 0 : question.points}
           onChange={handlePointsChange}
           min="0"
           className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:ring-sky-500 focus:border-sky-500"
         />
       </div>
-      
+
       <div>
         <label htmlFor={`${question.id}_explanation`} className="block font-medium text-sky-300 mb-1">Explanation (Optional)</label>
         <textarea
@@ -71,7 +70,7 @@ export const BaseQuestionFormFields: React.FC<BaseQuestionFormFieldsProps> = ({ 
           className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:ring-sky-500 focus:border-sky-500"
         />
       </div>
-      
+
       <div>
         <label htmlFor={`${question.id}_learningObjective`} className="block font-medium text-sky-300 mb-1">Learning Objective (Optional)</label>
         <input
@@ -89,13 +88,13 @@ export const BaseQuestionFormFields: React.FC<BaseQuestionFormFieldsProps> = ({ 
         <textarea
           id={`${question.id}_glossary`}
           name="glossary"
-          value={(question.glossary || []).join('\n')} 
-          onChange={handleInputChange} 
+          value={(question.glossary || []).join('\n')}
+          onChange={handleInputChange}
           rows={2}
           className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:ring-sky-500 focus:border-sky-500"
         />
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-700 mt-4">
         <div>
           <label htmlFor={`${question.id}_difficulty`} className="block font-medium text-sky-300 mb-1">Difficulty</label>
@@ -168,6 +167,17 @@ export const BaseQuestionFormFields: React.FC<BaseQuestionFormFieldsProps> = ({ 
             id={`${question.id}_contextCode`}
             name="contextCode"
             value={question.contextCode || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:ring-sky-500 focus:border-sky-500"
+          />
+        </div>
+        <div>
+          <label htmlFor={`${question.id}_course`} className="block font-medium text-sky-300 mb-1">Course (Optional)</label>
+          <input
+            type="text"
+            id={`${question.id}_course`}
+            name="course"
+            value={question.course || ''}
             onChange={handleInputChange}
             className="w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:ring-sky-500 focus:border-sky-500"
           />

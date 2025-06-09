@@ -176,50 +176,50 @@ export interface QuizConfig {
 
 export interface SCORMSettings {
   version: "1.2" | "2004";
-  setCompletionOnFinish?: boolean; 
-  setSuccessOnPass?: boolean;     
-  autoCommit?: boolean;           
+  setCompletionOnFinish?: boolean;
+  setSuccessOnPass?: boolean;
+  autoCommit?: boolean;
 
-  studentNameVar?: string;        
-  lessonStatusVar?: string;       
+  studentNameVar?: string;
+  lessonStatusVar?: string;
   scoreRawVar?: string;
   scoreMaxVar?: string;
   scoreMinVar?: string;
-  sessionTimeVar?: string;        
-  exitVar?: string;               
-  suspendDataVar?: string;        
+  sessionTimeVar?: string;
+  exitVar?: string;
+  suspendDataVar?: string;
 
-  lessonStatusVar_1_2?: string;   
-  scoreRawVar_1_2?: string;       
-  scoreMaxVar_1_2?: string;       
-  scoreMinVar_1_2?: string;       
+  lessonStatusVar_1_2?: string;
+  scoreRawVar_1_2?: string;
+  scoreMaxVar_1_2?: string;
+  scoreMinVar_1_2?: string;
 
-  completionStatusVar_2004?: string; 
-  successStatusVar_2004?: string;    
-  scoreScaledVar_2004?: string;      
-  scoreRawVar_2004?: string;       
-  scoreMaxVar_2004?: string;       
-  scoreMinVar_2004?: string;       
+  completionStatusVar_2004?: string;
+  successStatusVar_2004?: string;
+  scoreScaledVar_2004?: string;
+  scoreRawVar_2004?: string;
+  scoreMaxVar_2004?: string;
+  scoreMinVar_2004?: string;
 }
 
 
 export interface QuizSettings {
   shuffleQuestions?: boolean;
-  shuffleOptions?: boolean; 
+  shuffleOptions?: boolean;
   timeLimitMinutes?: number;
   showCorrectAnswers?: 'immediately' | 'end_of_quiz' | 'never';
   passingScorePercent?: number;
-  webhookUrl?: string; 
-  scorm?: SCORMSettings; 
+  webhookUrl?: string;
+  scorm?: SCORMSettings;
 }
 
 export type UserAnswers = Map<string, UserAnswerType>;
 
 export type UserAnswerType =
-  | string 
-  | string[] 
-  | Record<string, string> 
-  | null; 
+  | string
+  | string[]
+  | Record<string, string>
+  | null;
 
 
 export interface PerformanceMetric {
@@ -227,7 +227,7 @@ export interface PerformanceMetric {
   correctQuestions: number;
   pointsEarned: number;
   maxPoints: number;
-  percentage: number; // Made required
+  percentage: number;
 }
 
 export interface PerformanceByLearningObjective extends PerformanceMetric {
@@ -240,7 +240,7 @@ export interface PerformanceByTopic extends PerformanceMetric {
   topic: string;
 }
 export interface PerformanceByDifficulty extends PerformanceMetric {
-  difficulty: string; 
+  difficulty: string;
 }
 export interface PerformanceByBloomLevel extends PerformanceMetric {
   bloomLevel: string;
@@ -252,22 +252,22 @@ export interface QuizResult {
   maxScore: number;
   percentage: number;
   answers: UserAnswers;
-  passed?: boolean; 
+  passed?: boolean;
   questionResults: Array<{
     questionId: string;
     isCorrect: boolean;
     pointsEarned: number;
     userAnswer: UserAnswerType;
-    correctAnswer: any; 
-    timeSpentSeconds?: number; 
+    correctAnswer: any;
+    timeSpentSeconds?: number;
   }>;
   webhookStatus?: 'idle' | 'sending' | 'success' | 'error';
   webhookError?: string;
   scormStatus?: 'idle' | 'no_api' | 'initializing' | 'initialized' | 'sending_data' | 'committed' | 'terminated' | 'error';
   scormError?: string;
-  studentName?: string; 
-  totalTimeSpentSeconds?: number; 
-  averageTimePerQuestionSeconds?: number; 
+  studentName?: string;
+  totalTimeSpentSeconds?: number;
+  averageTimePerQuestionSeconds?: number;
 
   performanceByLearningObjective?: PerformanceByLearningObjective[];
   performanceByCategory?: PerformanceByCategory[];
@@ -282,11 +282,11 @@ export interface QuizEngineCallbacks {
     currentQuestionNumber: number;
     totalQuestions: number;
     timeLimitInSeconds: number | null;
-    scormStatus?: QuizResult['scormStatus']; 
-    studentName?: string; 
+    scormStatus?: QuizResult['scormStatus'];
+    studentName?: string;
   }) => void;
   onQuestionChange?: (question: QuizQuestion | null, currentQuestionNumber: number, totalQuestions: number) => void;
-  onAnswerSubmit?: (question: QuizQuestion, userAnswer: UserAnswerType) => void; 
+  onAnswerSubmit?: (question: QuizQuestion, userAnswer: UserAnswerType) => void;
   onQuizFinish?: (results: QuizResult) => void;
   onTimeTick?: (timeLeftInSeconds: number) => void;
   onQuizTimeUp?: () => void;

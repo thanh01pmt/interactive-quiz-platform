@@ -9,20 +9,21 @@ const createBaseQuestionPart = (): Omit<BaseQuestion, 'id' | 'questionType'> => 
     prompt: '',
     points: 10,
     explanation: '',
-    learningObjective: '', 
-    glossary: [],           
-    bloomLevel: '',         
-    difficulty: 'medium',   
-    category: '',           
-    topic: '',              
-    gradeBand: '',          
-    contextCode: '',        
+    learningObjective: '',
+    glossary: [],
+    bloomLevel: '',
+    difficulty: 'medium',
+    category: '',
+    topic: '',
+    gradeBand: '',
+    contextCode: '',
+    course: '', // Added course to BaseQuestion, so initializing it here
   };
 };
 
 export const getNewQuestionTemplate = (type: QuestionTypeStrings): QuizQuestion => {
   const basePart = createBaseQuestionPart();
-  const id = generateUniqueId('q_'); 
+  const id = generateUniqueId('q_');
 
   switch (type) {
     case 'multiple_choice':
@@ -82,7 +83,7 @@ export const getNewQuestionTemplate = (type: QuestionTypeStrings): QuizQuestion 
             id,
             questionType: 'sequence',
             items: [{id: seqItemId1, content: 'Item 1'}, {id: seqItemId2, content: 'Item 2'}],
-            correctOrder: [seqItemId1, seqItemId2], 
+            correctOrder: [seqItemId1, seqItemId2],
         };
     case 'matching':
         const promptId = generateUniqueId('match_p_');
@@ -139,6 +140,7 @@ export const getNewQuestionTemplate = (type: QuestionTypeStrings): QuizQuestion 
       // This ensures that if QuestionTypeStrings gets a new type, TypeScript will complain here
       // if we haven't added a case for it, because `type` would not be `never`.
       const _exhaustiveCheck: never = type;
-      throw new Error(`Unhandled question type in getNewQuestionTemplate: ${_exhaustiveCheck}`);
+      console.error(`Unhandled question type in getNewQuestionTemplate: ${_exhaustiveCheck}`);
+      throw new Error(`Unhandled question type in getNewQuestionTemplate: ${type}`);
   }
 };

@@ -10,7 +10,7 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false, // We will emit declaration files, Rollup handles JS
+    "noEmit": true,
     "jsx": "react-jsx",
     /* Linting */
     "strict": true,
@@ -20,7 +20,7 @@
     /* Library specific */
     "declaration": true,
     "declarationDir": "dist/types",
-    "outDir": "dist", // Not strictly used by Rollup for JS, but good for tsc's own awareness
+    "outDir": "dist", 
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",
