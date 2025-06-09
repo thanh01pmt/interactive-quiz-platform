@@ -1,0 +1,6 @@
+{
+  "name": "Interactive Quiz Platform",
+  "description": "A React-based application for playing and managing quizzes. Supports various question types, JSON import/export. SCORM integration, webhook, and email result submissions are potential future enhancements.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

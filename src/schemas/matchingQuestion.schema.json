@@ -1,0 +1,61 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Matching Question",
+  "description": "Schema for a matching question (e.g., match terms to definitions).",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "matching"
+    },
+    "prompts": {
+      "type": "array",
+      "description": "The fixed list of items to match from (e.g., terms, questions).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "content": { "type": "string" }
+        },
+        "required": ["id", "content"]
+      }
+    },
+    "options": {
+      "type": "array",
+      "description": "The list of items to match to the prompts (e.g., definitions, answers).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "content": { "type": "string" }
+        },
+        "required": ["id", "content"]
+      }
+    },
+    "correctAnswerMap": {
+      "type": "array",
+      "description": "Defines the correct pairings of prompts to options.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "promptId": { "type": "string" },
+          "optionId": { "type": "string" }
+        },
+        "required": ["promptId", "optionId"]
+      }
+    },
+    "shuffleOptions": {
+      "type": "boolean",
+      "description": "Whether to shuffle the 'options' list for the user."
+    }
+  },
+  "required": [
+    "prompts",
+    "options",
+    "correctAnswerMap"
+  ],
+  "additionalProperties": false
+}

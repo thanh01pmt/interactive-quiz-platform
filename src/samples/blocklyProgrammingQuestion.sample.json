@@ -1,0 +1,15 @@
+
+{
+  "id": "blockly_sample_001",
+  "questionType": "blockly_programming",
+  "prompt": "Use Blockly blocks to create a program that declares a variable 'count' set to 0, then increments it by 1 in a loop that runs 5 times. Finally, print the value of 'count'.",
+  "points": 25,
+  "explanation": "The final value of 'count' should be 5. The loop iterates 5 times, and 'count' is incremented in each iteration.",
+  "learningObjective": "Understand variable declaration, loops, and increment operations in Blockly.",
+  "difficulty": "medium",
+  "category": "Computer Science",
+  "topic": "Block Programming - Loops and Variables",
+  "toolboxDefinition": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><category name=\"Variables\" colour=\"%{BKY_VARIABLES_HUE}\" custom=\"VARIABLE\"></category><category name=\"Loops\" colour=\"%{BKY_LOOPS_HUE}\"><block type=\"controls_repeat_ext\"><value name=\"TIMES\"><shadow type=\"math_number\"><field name=\"NUM\">5</field></shadow></value></block></category><category name=\"Math\" colour=\"%{BKY_MATH_HUE}\"><block type=\"math_number\"><field name=\"NUM\">0</field></block><block type=\"math_arithmetic\"><field name=\"OP\">ADD</field><value name=\"A\"><shadow type=\"math_number\"><field name=\"NUM\">1</field></shadow></value><value name=\"B\"><shadow type=\"math_number\"><field name=\"NUM\">1</field></shadow></value></block></category><category name=\"Text\" colour=\"%{BKY_TEXTS_HUE}\"><block type=\"text_print\"></block></category></xml>",
+  "initialWorkspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><variables><variable id=\"var_count\">count</variable></variables></xml>",
+  "solutionWorkspaceXML": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><variables><variable id=\"var_count\">count</variable></variables><block type=\"variables_set\" x=\"50\" y=\"50\"><field name=\"VAR\" id=\"var_count\">count</field><value name=\"VALUE\"><block type=\"math_number\"><field name=\"NUM\">0</field></block></value><next><block type=\"controls_repeat_ext\"><value name=\"TIMES\"><shadow type=\"math_number\"><field name=\"NUM\">5</field></shadow></value><statement name=\"DO\"><block type=\"variables_set\"><field name=\"VAR\" id=\"var_count\">count</field><value name=\"VALUE\"><block type=\"math_arithmetic\"><field name=\"OP\">ADD</field><value name=\"A\"><block type=\"variables_get\"><field name=\"VAR\" id=\"var_count\">count</field></block></value><value name=\"B\"><block type=\"math_number\"><field name=\"NUM\">1</field></block></value></block></value></block></statement><next><block type=\"text_print\"><value name=\"TEXT\"><block type=\"variables_get\"><field name=\"VAR\" id=\"var_count\">count</field></block></value></block></next></block></next></block></xml>"
+}

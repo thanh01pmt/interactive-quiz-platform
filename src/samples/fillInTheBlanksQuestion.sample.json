@@ -1,0 +1,24 @@
+
+{
+  "id": "fitb_sample_001",
+  "questionType": "fill_in_the_blanks",
+  "prompt": "Water is composed of two elements: {blank_hydrogen} and {blank_oxygen}.",
+  "points": 10,
+  "explanation": "Water (H₂O) consists of two hydrogen atoms and one oxygen atom.",
+  "learningObjective": "Recall the elemental composition of water.",
+  "difficulty": "easy",
+  "category": "Chemistry",
+  "topic": "Basic Chemistry",
+  "segments": [
+    { "type": "text", "content": "Water is composed of two elements: " },
+    { "type": "blank", "id": "blank_hydrogen" },
+    { "type": "text", "content": " and " },
+    { "type": "blank", "id": "blank_oxygen" },
+    { "type": "text", "content": "." }
+  ],
+  "answers": [
+    { "blankId": "blank_hydrogen", "acceptedValues": ["Hydrogen", "hydrogen"] },
+    { "blankId": "blank_oxygen", "acceptedValues": ["Oxygen", "oxygen"] }
+  ],
+  "isCaseSensitive": false
+}

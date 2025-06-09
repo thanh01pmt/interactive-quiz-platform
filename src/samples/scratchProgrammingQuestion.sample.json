@@ -1,0 +1,15 @@
+
+{
+  "id": "scratch_sample_001",
+  "questionType": "scratch_programming",
+  "prompt": "When the green flag is clicked, make the sprite say 'Hello, Scratch!' for 2 seconds.",
+  "points": 15,
+  "explanation": "Use an 'event_whenflagclicked' block connected to a 'looks_sayforsecs' block with the message 'Hello, Scratch!' and duration 2.",
+  "learningObjective": "Understand basic event handling and sprite actions in a Scratch-like environment.",
+  "difficulty": "easy",
+  "category": "Computer Science",
+  "topic": "Block Programming - Events and Looks",
+  "toolboxDefinition": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><category name=\"Events\" categorystyle=\"event_category\"><block type=\"event_whenflagclicked\"></block></category><category name=\"Looks\" categorystyle=\"looks_category\"><block type=\"looks_sayforsecs\"><value name=\"MESSAGE\"><shadow type=\"text\"><field name=\"TEXT\">Hello!</field></shadow></value><value name=\"SECS\"><shadow type=\"math_number\"><field name=\"NUM\">2</field></shadow></value></block></category></xml>",
+  "initialWorkspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"></xml>",
+  "solutionWorkspaceXML": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"event_whenflagclicked\" x=\"50\" y=\"50\"><next><block type=\"looks_sayforsecs\"><value name=\"MESSAGE\"><shadow type=\"text\"><field name=\"TEXT\">Hello, Scratch!</field></shadow></value><value name=\"SECS\"><shadow type=\"math_number\"><field name=\"NUM\">2</field></shadow></value></block></next></block></xml>"
+}

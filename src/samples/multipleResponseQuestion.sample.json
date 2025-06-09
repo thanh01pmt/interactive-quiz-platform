@@ -1,0 +1,22 @@
+
+{
+  "id": "mrq_sample_001",
+  "questionType": "multiple_response",
+  "prompt": "Which of the following are planets in our Solar System? (Select all that apply)",
+  "points": 15,
+  "explanation": "Earth, Mars, and Jupiter are planets. The Moon is a natural satellite of Earth.",
+  "learningObjective": "Distinguish planets from other celestial bodies in our Solar System.",
+  "glossary": ["Planet", "Solar System", "Celestial Body"],
+  "bloomLevel": "Understanding",
+  "difficulty": "easy",
+  "category": "Science",
+  "topic": "Astronomy - Solar System",
+  "options": [
+    { "id": "mrq_opt_1a", "text": "Earth" },
+    { "id": "mrq_opt_1b", "text": "Moon" },
+    { "id": "mrq_opt_1c", "text": "Mars" },
+    { "id": "mrq_opt_1d", "text": "Jupiter" },
+    { "id": "mrq_opt_1e", "text": "Andromeda" }
+  ],
+  "correctAnswerIds": ["mrq_opt_1a", "mrq_opt_1c", "mrq_opt_1d"]
+}

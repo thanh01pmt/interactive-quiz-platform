@@ -1,0 +1,15 @@
+
+{
+  "id": "tf_sample_001",
+  "questionType": "true_false",
+  "prompt": "The Earth is flat.",
+  "points": 5,
+  "explanation": "The Earth is an oblate spheroid, not flat. This has been proven through various scientific observations and experiments.",
+  "learningObjective": "Recall basic facts about Earth's shape.",
+  "glossary": ["Oblate spheroid"],
+  "bloomLevel": "Remembering",
+  "difficulty": "easy",
+  "category": "Science",
+  "topic": "Earth Science - Planet Shape",
+  "correctAnswer": false
+}

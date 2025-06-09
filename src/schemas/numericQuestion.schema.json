@@ -1,0 +1,28 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Numeric Question",
+  "description": "Schema for a numeric input question.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "numeric"
+    },
+    "answer": {
+      "type": "number",
+      "description": "The correct numeric answer."
+    },
+    "tolerance": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Optional tolerance for the answer (e.g., answer is 10, tolerance 1, accepts 9, 10, 11)."
+    }
+  },
+  "required": [
+    "answer"
+  ],
+  "additionalProperties": false
+}

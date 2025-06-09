@@ -1,0 +1,29 @@
+
+{
+  "id": "match_sample_001",
+  "questionType": "matching",
+  "prompt": "Match the country with its capital city.",
+  "points": 12,
+  "explanation": "Paris is the capital of France, Berlin is the capital of Germany, and Rome is the capital of Italy.",
+  "learningObjective": "Identify capitals of European countries.",
+  "difficulty": "easy",
+  "category": "Geography",
+  "topic": "World Capitals",
+  "prompts": [
+    { "id": "match_prompt_france", "content": "France" },
+    { "id": "match_prompt_germany", "content": "Germany" },
+    { "id": "match_prompt_italy", "content": "Italy" }
+  ],
+  "options": [
+    { "id": "match_option_rome", "content": "Rome" },
+    { "id": "match_option_paris", "content": "Paris" },
+    { "id": "match_option_berlin", "content": "Berlin" },
+    { "id": "match_option_madrid", "content": "Madrid" }
+  ],
+  "correctAnswerMap": [
+    { "promptId": "match_prompt_france", "optionId": "match_option_paris" },
+    { "promptId": "match_prompt_germany", "optionId": "match_option_berlin" },
+    { "promptId": "match_prompt_italy", "optionId": "match_option_rome" }
+  ],
+  "shuffleOptions": true
+}

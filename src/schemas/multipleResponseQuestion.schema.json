@@ -1,0 +1,41 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Multiple Response Question",
+  "description": "Schema for a multiple response question where multiple answers can be correct.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "multiple_response"
+    },
+    "options": {
+      "type": "array",
+      "description": "List of choices for the question.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Unique ID for the option." },
+          "text": { "type": "string", "description": "Text content of the option." }
+        },
+        "required": ["id", "text"]
+      },
+      "minItems": 1
+    },
+    "correctAnswerIds": {
+      "type": "array",
+      "description": "An array of IDs of the correct options.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "options",
+    "correctAnswerIds"
+  ],
+  "additionalProperties": false
+}

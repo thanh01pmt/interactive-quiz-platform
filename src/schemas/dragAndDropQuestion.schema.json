@@ -1,0 +1,60 @@
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Drag and Drop Question",
+  "description": "Schema for a drag and drop matching question.",
+  "type": "object",
+  "allOf": [
+    { "$ref": "baseQuestion.schema.json" }
+  ],
+  "properties": {
+    "questionType": {
+      "const": "drag_and_drop"
+    },
+    "draggableItems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "content": { "type": "string" }
+        },
+        "required": ["id", "content"]
+      }
+    },
+    "dropZones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" }
+        },
+        "required": ["id", "label"]
+      }
+    },
+    "answerMap": {
+      "type": "array",
+      "description": "Defines the correct pairings of draggable items to drop zones.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "draggableId": { "type": "string" },
+          "dropZoneId": { "type": "string" }
+        },
+        "required": ["draggableId", "dropZoneId"]
+      }
+    },
+    "backgroundImageUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Optional background image URL for context."
+    }
+  },
+  "required": [
+    "draggableItems",
+    "dropZones",
+    "answerMap"
+  ],
+  "additionalProperties": false
+}
