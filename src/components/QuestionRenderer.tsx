@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { QuizQuestion, UserAnswerType } from '../types';
 import { MultipleChoiceQuestionUI } from './MultipleChoiceQuestionUI';
@@ -155,17 +154,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     }
   };
 
-  const metadataFields: Array<{ label: string; value?: string | string[] }> = [
-    { label: "Bloom's Level", value: question.bloomLevel },
-    { label: "Difficulty", value: question.difficulty },
-    { label: "Category", value: question.category },
-    { label: "Topic", value: question.topic },
-    { label: "Course", value: question.course },
-    { label: "Grade Band", value: question.gradeBand },
-    { label: "Context Code", value: question.contextCode },
-  ].filter(field => field.value !== undefined && field.value !== null && (Array.isArray(field.value) ? field.value.length > 0 : String(field.value).trim() !== ''));
-
-
   return (
     <Card className="w-full">
       <div className="mb-4">
@@ -174,45 +162,10 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       </div>
       <h2 className="text-xl font-semibold text-slate-100 mb-6">{question.prompt}</h2>
       {renderQuestionSpecificUI()}
-      {showCorrectAnswer && (
-        <div className="mt-6 space-y-3">
-          {question.learningObjective && (
-            <div className="p-3 bg-slate-700 rounded-md">
-              <h4 className="font-semibold text-sky-300">Learning Objective:</h4>
-              <p className="text-slate-300 text-sm">{question.learningObjective}</p>
-            </div>
-          )}
-          {question.explanation && (
-            <div className="p-3 bg-slate-700 rounded-md">
-              <h4 className="font-semibold text-sky-300">Explanation:</h4>
-              <p className="text-slate-300 text-sm">{question.explanation}</p>
-            </div>
-          )}
-          {question.glossary && question.glossary.length > 0 && (
-            <div className="p-3 bg-slate-700 rounded-md">
-              <h4 className="font-semibold text-sky-300">Glossary:</h4>
-              <ul className="list-disc list-inside text-slate-300 text-sm">
-                {question.glossary.map((term, index) => (
-                  <li key={`glossary-${index}`}>{term}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {metadataFields.length > 0 && (
-            <div className="p-3 bg-slate-700 rounded-md">
-              <h4 className="font-semibold text-sky-300 mb-2">Additional Information:</h4>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                {metadataFields.map(field => (
-                  <div key={field.label} className="flex">
-                    <dt className="font-medium text-slate-400 w-1/3 pr-2">{field.label}:</dt>
-                    <dd className="text-slate-300 w-2/3">
-                      {Array.isArray(field.value) ? field.value.join(', ') : field.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          )}
+      {showCorrectAnswer && question.explanation && (
+        <div className="mt-6 p-3 bg-slate-700 rounded-md">
+          <h4 className="font-semibold text-sky-300">Explanation:</h4>
+          <p className="text-slate-300 text-sm">{question.explanation}</p>
         </div>
       )}
     </Card>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { QuizConfig, QuizQuestion as QuizQuestionType, UserAnswerType, QuizResult as QuizResultType, QuizEngineCallbacks } from '../types';
 import { QuizEngine } from '../services/QuizEngine';
@@ -20,23 +19,21 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
   const [showResults, setShowResults] = useState<boolean>(false);
   const [quizResults, setQuizResults] = useState<QuizResultType | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [studentNameFromLMS, setStudentNameFromLMS] = useState<string | undefined>(undefined);
 
-
+  // Keep a ref to the engine to ensure cleanup uses the correct instance
   const engineRef = useRef<QuizEngine | null>(null);
 
-  const handleFinishQuiz = useCallback(async () => {
+  const handleFinishQuiz = useCallback(() => {
     if (engineRef.current) {
-      const results = await engineRef.current.calculateResults(); 
-      // QuizEngine's onQuizFinish callback should update quizResults state already.
-      // This explicit set is a fallback or ensures the latest state if onQuizFinish isn't perfectly synced.
-      setQuizResults(results); 
+      const results = engineRef.current.calculateResults(); // This will also trigger onQuizFinish callback
+      setQuizResults(results);
       setShowResults(true);
-      onQuizComplete(results);
+      onQuizComplete(results); // For App.tsx if needed
     }
   }, [onQuizComplete]);
 
   useEffect(() => {
+    // Cleanup previous engine instance if it exists
     if (engineRef.current) {
       engineRef.current.destroy();
     }
@@ -45,70 +42,82 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
       onQuizStart: (initialData) => {
         console.log("Quiz Started (via callback)", initialData);
         setCurrentQuestion(initialData.initialQuestion);
+        // For a new engine instance, the answer for the initial question is null.
+        // The main useEffect body (after newEngine is created) will sync state from the engine.
         setUserAnswer(null);
         setTimeLeft(initialData.timeLimitInSeconds);
-        setStudentNameFromLMS(initialData.studentName); // Store student name
-        if(initialData.scormStatus && initialData.scormStatus !== 'idle'){
-            // Potentially update a global SCORM status indicator here if needed
-            console.log("Initial SCORM Status:", initialData.scormStatus, "Student:", initialData.studentName);
-        }
       },
       onQuestionChange: (question, cqNum, tqNum) => {
         console.log(`Question Changed (via callback): ${cqNum}/${tqNum}`, question);
         setCurrentQuestion(question);
+        // If 'question' is null, userAnswer should be null.
+        // If 'question' is not null:
+        //   - For the *initial* call from QuizEngine constructor, engineRef.current might be stale or null.
+        //     In this case, userAnswer will effectively be null. The main useEffect body handles the true initial state.
+        //   - For *subsequent* calls (user navigation), engineRef.current is valid.
         if (question && engineRef.current && engineRef.current.questions[cqNum-1]?.id === question.id) {
+          // Check if engineRef.current is the relevant engine instance for this question
           setUserAnswer(engineRef.current.getUserAnswer(question.id) || null);
         } else {
+          // Fallback for initial constructor call, or if question is null, or engineRef not aligned
           setUserAnswer(null);
         }
       },
       onAnswerSubmit: (question, answer) => {
         console.log(`Answer Submitted (via callback) for Q ID:${question.id}, Prompt: "${question.prompt.substring(0,30)}..."`, answer);
+        // Example of using the richer question object for custom logic:
+        // if (question.points && question.points >= 15) {
+        //   console.log(`High-value question answered: ${question.prompt.substring(0,50)}...`);
+        // }
       },
-      onQuizFinish: (resultsWithAllStatus) => {
-        console.log("Quiz Finished (via callback with all statuses)", resultsWithAllStatus);
-        setQuizResults(resultsWithAllStatus); 
-        // setShowResults(true); // Let handleFinishQuiz control this to avoid race conditions
+      onQuizFinish: (results) => {
+        console.log("Quiz Finished (via callback)", results);
+        // This callback is good for external logging or side effects.
+        // QuizPlayer already handles setting state for results internally via handleFinishQuiz.
       },
       onTimeTick: (timeLeftInSeconds) => {
         setTimeLeft(timeLeftInSeconds);
       },
-      onQuizTimeUp: async () => {
+      onQuizTimeUp: () => {
         console.log("Quiz Time Up (via callback)!");
-        alert("Time's up!");
-        await handleFinishQuiz(); 
+        alert("Time's up!"); // Basic notification
+        handleFinishQuiz();
       }
     };
 
     const newEngine = new QuizEngine({ config: quizConfig, callbacks });
     setQuizEngine(newEngine);
-    engineRef.current = newEngine;
+    engineRef.current = newEngine; // Update ref
 
+    // Initial state setup based on the new engine
     const initialQ = newEngine.getCurrentQuestion();
-    setCurrentQuestion(initialQ);
-    setUserAnswer(initialQ ? newEngine.getUserAnswer(initialQ.id) || null : null);
+    setCurrentQuestion(initialQ); // This might be redundant if callbacks already set it, but harmless and ensures sync.
+    setUserAnswer(initialQ ? newEngine.getUserAnswer(initialQ.id) || null : null); // Correctly gets initial answer (null for new engine)
     setShowResults(false);
     setQuizResults(null);
-    setTimeLeft(newEngine.getTimeLeftInSeconds());
+    setTimeLeft(newEngine.getTimeLeftInSeconds()); // Ensures timeLeft is synced from the new engine.
 
+    // Cleanup function for this effect
     return () => {
       if (engineRef.current) {
         engineRef.current.destroy();
         engineRef.current = null;
       }
     };
-  }, [quizConfig, handleFinishQuiz]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizConfig]); // handleFinishQuiz is not needed here as its definition is stable
 
 
   const handleAnswerChange = useCallback((answer: UserAnswerType) => {
-    setUserAnswer(answer); 
+    setUserAnswer(answer); // Local UI update
     if (engineRef.current && currentQuestion) {
-      engineRef.current.submitAnswer(currentQuestion.id, answer);
+      engineRef.current.submitAnswer(currentQuestion.id, answer); // Engine handles its state + onAnswerSubmit callback
     }
   }, [currentQuestion]);
 
   const navigate = (direction: 'next' | 'prev') => {
     if (!engineRef.current) return;
+    // Engine's next/prev methods will trigger onQuestionChange callback
     if (direction === 'next') {
       engineRef.current.nextQuestion();
     } else {
@@ -119,34 +128,34 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
   const handleNext = () => navigate('next');
   const handlePrev = () => navigate('prev');
   
-  const handleRestartQuiz = useCallback(async () => {
+  const handleRestartQuiz = useCallback(() => {
     if (engineRef.current) {
         engineRef.current.destroy();
     }
+    // Define callbacks for the new engine instance.
+    // These are similar to the main useEffect, but ensure engineRef.current is used where appropriate.
     const callbacks: QuizEngineCallbacks = {
         onQuizStart: (initialData) => {
             setCurrentQuestion(initialData.initialQuestion);
             setUserAnswer(null);
             setTimeLeft(initialData.timeLimitInSeconds);
-            setStudentNameFromLMS(initialData.studentName);
         },
         onQuestionChange: (q, cqNum, tqNum) => {
             setCurrentQuestion(q);
+            // engineRef.current will point to the new engine by the time this is called by user actions.
+            // If called by constructor, it's fine for userAnswer to be null as main block below will set it.
             if (q && engineRef.current && engineRef.current.questions[cqNum-1]?.id === q.id) {
                  setUserAnswer(engineRef.current.getUserAnswer(q.id) || null);
             } else {
                  setUserAnswer(null);
             }
         },
-        onAnswerSubmit: (question, answer) => { 
+        onAnswerSubmit: (question, answer) => { // Updated signature
            console.log(`(Restart) Answer Submitted (via callback) for Q ID:${question.id}`, answer);
         },
-        onQuizFinish: (resultsWithAllStatus) => {
-           console.log("Quiz (Restart) Finished (via callback)", resultsWithAllStatus);
-           setQuizResults(resultsWithAllStatus);
-        },
         onTimeTick: (seconds) => setTimeLeft(seconds),
-        onQuizTimeUp: async () => { alert("Time's up!"); await handleFinishQuiz(); },
+        onQuizTimeUp: () => { alert("Time's up!"); handleFinishQuiz(); },
+        // other callbacks like onQuizFinish can be added if their behavior during restart needs specific handling.
     };
 
     const newEngine = new QuizEngine({ config: quizConfig, callbacks });
@@ -191,9 +200,6 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
   return (
     <div className="w-full max-w-3xl mx-auto">
       <Card title={quizConfig.title} className="mb-6">
-        {studentNameFromLMS && (
-            <p className="text-sm text-sky-300 mb-1">Student: {studentNameFromLMS}</p>
-        )}
         {quizConfig.description && <p className="text-slate-300 mb-4">{quizConfig.description}</p>}
          {timeLeft !== null && (
           <div className={`text-right font-semibold mb-4 text-lg ${timeLeft <= 60 ? 'text-red-500 animate-pulse' : 'text-sky-400'}`}>
