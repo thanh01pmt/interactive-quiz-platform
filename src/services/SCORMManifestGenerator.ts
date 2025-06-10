@@ -33,12 +33,10 @@ export const generateIMSManifestXML = (
 
   const scormVersionSetting = quizConfig.settings?.scorm?.version || "1.2"; // Default to 1.2
   let scormSchemaVersion = "1.2";
-  let adlcpNamespace = "adlcp"; // Default for SCORM 1.2
   let imsssNamespace = ""; // Not used by default for 1.2
 
   if (scormVersionSetting === "2004") {
     scormSchemaVersion = "2004 4th Edition"; // Or other editions like "2004 3rd Edition"
-    adlcpNamespace = "adlcp"; // Still common for some metadata in 2004
     imsssNamespace = `xmlns:imsss="http://www.imsglobal.org/xsd/imsss"`;
   }
   

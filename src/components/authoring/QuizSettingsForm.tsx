@@ -22,7 +22,7 @@ export const QuizSettingsForm: React.FC<QuizSettingsFormProps> = ({
   const [shuffleOptions, setShuffleOptions] = useState(initialSettings?.shuffleOptions || false);
   const [timeLimitMinutes, setTimeLimitMinutes] = useState(initialSettings?.timeLimitMinutes || 0);
   const [passingScorePercent, setPassingScorePercent] = useState(initialSettings?.passingScorePercent || 70);
-  const [showCorrectAnswers, setShowCorrectAnswers] = useState(initialSettings?.showCorrectAnswers || 'end_of_quiz');
+  const [showCorrectAnswers, setShowCorrectAnswers] = useState<'immediately' | 'end_of_quiz' | 'never'>(initialSettings?.showCorrectAnswers || 'end_of_quiz');
   const [webhookUrl, setWebhookUrl] = useState(initialSettings?.webhookUrl || '');
   const [scormSettings, setScormSettings] = useState<SCORMSettings>(initialSettings?.scorm || { version: '1.2' });
 
@@ -171,7 +171,7 @@ export const QuizSettingsForm: React.FC<QuizSettingsFormProps> = ({
           <select
             id="showCorrect"
             value={showCorrectAnswers}
-            onChange={(e) => setShowCorrectAnswers(e.target.value as QuizSettings['showCorrectAnswers'])}
+            onChange={(e) => setShowCorrectAnswers(e.target.value as 'immediately' | 'end_of_quiz' | 'never')}
             className="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
           >
             <option value="end_of_quiz">End of Quiz</option>

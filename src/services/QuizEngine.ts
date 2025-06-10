@@ -388,18 +388,6 @@ export class QuizEngine {
     return finalResults;
   }
 
-  private isPointInHotspot(px: number, py: number, hotspot: HotspotArea): boolean {
-    const [coord1, coord2, coord3, coord4] = hotspot.coords;
-    if (hotspot.shape === 'rect') {
-      const x = coord1; const y = coord2; const w = coord3; const h = coord4;
-      return px >= x && px <= x + w && py >= y && py <= y + h;
-    } else if (hotspot.shape === 'circle') {
-      const cx = coord1; const cy = coord2; const r = coord3;
-      return (px - cx) ** 2 + (py - cy) ** 2 <= r ** 2;
-    }
-    return false;
-  }
-
   private evaluateQuestion(question: QuizQuestion, answer: UserAnswerType): {isCorrect: boolean, correctAnswer: any, pointsEarned: number} {
     let isCorrect = false;
     let correctAnswer: any = null;

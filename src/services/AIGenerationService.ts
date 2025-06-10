@@ -63,11 +63,11 @@ Ensure the generated question is factually accurate and appropriate for the give
 ${difficulty ? `The desired difficulty is: "${difficulty}".` : 'Use a medium difficulty if not obvious from the topic.'}
 Return ONLY the JSON object.`;
   
-  let genAIResponse: GenerateContentResponse | undefined;
+  let rawResponseText: string | undefined;
 
   try {
     console.log("Sending prompt to Gemini:", userPrompt, "System Instruction:", systemInstruction);
-    genAIResponse = await ai.models.generateContent({
+    const genAIResponse: GenerateContentResponse = await ai.models.generateContent({
       model: 'gemini-2.5-flash-preview-04-17',
       contents: userPrompt,
       config: {
@@ -75,8 +75,8 @@ Return ONLY the JSON object.`;
         responseMimeType: "application/json",
       }
     });
-
-    let jsonStr = genAIResponse.text.trim();
+    rawResponseText = genAIResponse.text;
+    let jsonStr = rawResponseText.trim();
     console.log("Raw AI Response Text:", jsonStr);
 
     const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
@@ -131,7 +131,7 @@ Return ONLY the JSON object.`;
     } else if (error.message && error.message.toLowerCase().includes("deadline exceeded")) {
         errorMessage = "The request to Gemini API timed out. The service might be busy or there could be network issues. Please try again later.";
     } else if (error instanceof SyntaxError) {
-        errorMessage = `Failed to parse AI response as JSON. Raw response: ${genAIResponse?.text?.substring(0, 200) || "N/A"}`;
+        errorMessage = `Failed to parse AI response as JSON. Raw response: ${rawResponseText?.substring(0, 200) || "N/A"}`;
     }
     throw new Error(errorMessage);
   }

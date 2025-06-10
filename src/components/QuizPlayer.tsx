@@ -50,8 +50,8 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
             console.log("Initial SCORM Status:", initialData.scormStatus, "Student:", initialData.studentName);
         }
       },
-      onQuestionChange: (question, cqNum, tqNum) => {
-        console.log(`Question Changed (via callback): ${cqNum}/${tqNum}`, question);
+      onQuestionChange: (question, cqNum, _tqNum) => { // tqNum changed to _tqNum
+        console.log(`Question Changed (via callback): ${cqNum}/${_tqNum}`, question);
         setCurrentQuestion(question);
         if (question && engineRef.current && engineRef.current.questions[cqNum-1]?.id === question.id) {
           setUserAnswer(engineRef.current.getUserAnswer(question.id) || null);
@@ -127,7 +127,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
             setTimeLeft(initialData.timeLimitInSeconds);
             setStudentNameFromLMS(initialData.studentName);
         },
-        onQuestionChange: (q, cqNum, tqNum) => {
+        onQuestionChange: (q, cqNum, _tqNum) => { // tqNum changed to _tqNum
             setCurrentQuestion(q);
             if (q && engineRef.current && engineRef.current.questions[cqNum-1]?.id === q.id) {
                  setUserAnswer(engineRef.current.getUserAnswer(q.id) || null);

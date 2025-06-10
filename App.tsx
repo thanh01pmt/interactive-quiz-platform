@@ -1,12 +1,12 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { QuizConfig, QuizResult as QuizResultType } from './types'; // Renamed QuizResult
-import { QuizPlayer } from './components/QuizPlayer';
-import { QuizDataManagement } from './components/QuizDataManagement';
-import { sampleQuiz } from './services/sampleQuiz';
-import { Button } from './components/shared/Button';
-import { Card } from './components/shared/Card';
-import { QuizAuthoringTool } from './components/authoring/QuizAuthoringTool'; // New Import
+import { QuizConfig, QuizResult as QuizResultType } from 'interactive-quiz-kit/types';
+import { QuizPlayer } from 'interactive-quiz-kit/components/QuizPlayer';
+import { QuizDataManagement } from 'interactive-quiz-kit/components/QuizDataManagement';
+import { sampleQuiz } from 'interactive-quiz-kit/services/sampleQuiz';
+import { Button } from 'interactive-quiz-kit/components/shared/Button';
+import { Card } from 'interactive-quiz-kit/components/shared/Card';
+import { QuizAuthoringTool } from 'interactive-quiz-kit/components/authoring/QuizAuthoringTool';
 
 type AppState = 'welcome' | 'playing' | 'authoring' | 'results_overview';
 
@@ -30,6 +30,7 @@ const App: React.FC = () => {
     // QuizPlayer shows detailed results. App state can remain 'playing' 
     // as QuizPlayer itself transitions to QuizResult component.
     // If a separate overview was needed: setAppState('results_overview');
+    console.log("Quiz completed in root App, result: ", result);
   }, []);
   
   const handleExitQuiz = useCallback(() => {
@@ -48,7 +49,7 @@ const App: React.FC = () => {
   const handleSaveAuthoredQuiz = useCallback((authoredQuiz: QuizConfig) => {
     setCurrentQuiz(authoredQuiz);
     setAppState('welcome'); // Go to welcome screen, user can choose to play or export
-    alert("Quiz saved! You can now play or export it.");
+    alert("Quiz saved! You can now play or export it from the main screen.");
   }, []);
   
   const handleExitAuthoring = useCallback(() => {

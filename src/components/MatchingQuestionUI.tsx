@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { MatchingQuestion, MatchPromptItem, MatchOptionItem, UserAnswerType } from '../types';
+import { MatchingQuestion, UserAnswerType } from '../types'; // Removed MatchPromptItem, MatchOptionItem
 
 interface MatchingQuestionUIProps {
   question: MatchingQuestion;
@@ -33,7 +33,7 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
   }, [userAnswer, question.prompts]);
 
   const [promptAssignments, setPromptAssignments] = useState<Record<string, string | null>>(initialAssignments);
-  const [draggedOption, setDraggedOption] = useState<MatchOptionItem | null>(null);
+  const [draggedOption, setDraggedOption] = useState<MatchingQuestion['options'][0] | null>(null); // Use indexed access type
 
   const availableOptions = useMemo(() => {
     const assignedOptionIds = new Set(Object.values(promptAssignments).filter(Boolean));
@@ -48,7 +48,7 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
      setPromptAssignments(initialAssignments);
   }, [initialAssignments]);
 
-  const handleDragStart = (option: MatchOptionItem) => {
+  const handleDragStart = (option: MatchingQuestion['options'][0]) => { // Use indexed access type
     if (showCorrectAnswer) return;
     setDraggedOption(option);
   };
