@@ -1,5 +1,4 @@
-
-import { QuizConfig } from '../types';
+import { QuizConfig } from '../../types';
 
 // Basic Toolbox XML for Blockly (Logic, Loops, Math, Text, Variables)
 const basicToolboxXml = `
@@ -149,25 +148,12 @@ const scratchSolutionHelloWorldXml = `
 export const sampleQuiz: QuizConfig = {
   id: "sample-quiz-1",
   title: "Comprehensive Knowledge Challenge",
-  description: "Test your knowledge with these varied questions, including new types and rich metadata!",
+  description: "Test your knowledge with these varied questions, including new types!",
   settings: {
     shuffleQuestions: false,
     showCorrectAnswers: "end_of_quiz",
     passingScorePercent: 70,
-    shuffleOptions: true, 
-    webhookUrl: "https://webhook.site/#!/b7ebf9c8-272e-4e42-9993-90875e672721", // Replace with your test URL
-    scorm: { // SCORM Settings for testing
-      version: "1.2",
-      setCompletionOnFinish: true,
-      setSuccessOnPass: true,
-      autoCommit: true,
-      studentNameVar: "cmi.core.student_name",
-      lessonStatusVar_1_2: "cmi.core.lesson_status", // Specifically for 1.2
-      scoreRawVar_1_2: "cmi.core.score.raw",
-      scoreMaxVar_1_2: "cmi.core.score.max",
-      scoreMinVar_1_2: "cmi.core.score.min",
-      sessionTimeVar: "cmi.core.session_time",
-    }
+    shuffleOptions: true, // General setting for MCQs, MRQs, Matching
   },
   questions: [
     {
@@ -182,15 +168,7 @@ export const sampleQuiz: QuizConfig = {
         { id: "q1-opt4", text: "Rome" }
       ],
       correctAnswerId: "q1-opt3",
-      learningObjective: "Identify European capitals.",
-      explanation: "Paris is the capital and most populous city of France.",
-      glossary: ["Capital", "France"],
-      bloomLevel: "Remembering",
-      difficulty: "easy",
-      category: "Geography",
-      topic: "European Capitals",
-      gradeBand: "Middle School",
-      contextCode: "GEO-EU-CAP-001"
+      explanation: "Paris is the capital and most populous city of France."
     },
     {
       id: "q2",
@@ -204,13 +182,7 @@ export const sampleQuiz: QuizConfig = {
         { id: "q2-opt4", text: "Yellow" }
       ],
       correctAnswerIds: ["q2-opt1", "q2-opt2", "q2-opt3"],
-      learningObjective: "Understand the RGB color model.",
-      explanation: "In the additive RGB color model, Red, Green, and Blue are the primary colors.",
-      glossary: ["RGB", "Primary Colors", "Additive Color Model"],
-      bloomLevel: "Understanding",
-      difficulty: "medium",
-      category: "Art & Design",
-      topic: "Color Theory"
+      explanation: "In the additive RGB color model, Red, Green, and Blue are the primary colors."
     },
     {
       id: "q3",
@@ -228,11 +200,8 @@ export const sampleQuiz: QuizConfig = {
         { blankId: "blank1", acceptedValues: ["east"] },
         { blankId: "blank2", acceptedValues: ["west"] }
       ],
-      isCaseSensitive: false,
-      explanation: "Due to Earth's rotation, the sun appears to rise in the East and set in the West.",
-      category: "Science",
-      topic: "Astronomy Basics",
-      difficulty: "easy"
+      isCaseSensitive: false, // Explicitly set case sensitivity
+      explanation: "Due to Earth's rotation, the sun appears to rise in the East and set in the West."
     },
     {
       id: "q4",
@@ -262,9 +231,7 @@ export const sampleQuiz: QuizConfig = {
       prompt: "The Great Wall of China is visible from the moon with the naked eye.",
       points: 5,
       correctAnswer: false,
-      learningObjective: "Debunk common misconceptions about landmarks.",
-      explanation: "This is a common misconception. The Great Wall is not visible from the moon without aid.",
-      glossary: ["Great Wall of China", "Naked Eye"]
+      explanation: "This is a common misconception. The Great Wall is not visible from the moon without aid."
     },
     {
       id: "q6",
@@ -273,11 +240,7 @@ export const sampleQuiz: QuizConfig = {
       points: 5,
       acceptedAnswers: ["H2O", "H₂O"],
       isCaseSensitive: false,
-      explanation: "The chemical symbol for water is H₂O, representing two hydrogen atoms and one oxygen atom.",
-      bloomLevel: "Remembering",
-      difficulty: "easy",
-      category: "Chemistry",
-      topic: "Chemical Symbols"
+      explanation: "The chemical symbol for water is H₂O, representing two hydrogen atoms and one oxygen atom."
     },
     {
       id: "q7",
@@ -293,11 +256,8 @@ export const sampleQuiz: QuizConfig = {
       prompt: "What is the approximate value of Pi (to 2 decimal places)? Enter the value.",
       points: 5,
       answer: 3.14,
-      tolerance: 0.005, 
-      explanation: "Pi (π) is approximately 3.14. A small tolerance is allowed for this answer.",
-      category: "Mathematics",
-      topic: "Constants",
-      bloomLevel: "Applying"
+      tolerance: 0.005, // Accepts 3.135 to 3.145
+      explanation: "Pi (π) is approximately 3.14. A small tolerance is allowed for this answer."
     },
     {
       id: "q9",
@@ -332,20 +292,20 @@ export const sampleQuiz: QuizConfig = {
         { promptId: "prompt_edison", optionId: "option_bulb" },
         { promptId: "prompt_wright", optionId: "option_plane" }
       ],
-      shuffleOptions: true,
-      explanation: "Bell - Telephone, Edison - Light Bulb, Wright Brothers - Airplane.",
-      difficulty: "medium",
-      category: "History",
-      topic: "Inventions"
+      shuffleOptions: true, // Will use quizConfig.settings.shuffleOptions if true here
+      explanation: "Bell - Telephone, Edison - Light Bulb, Wright Brothers - Airplane."
     },
     {
       id: "q11",
       questionType: "hotspot",
       prompt: "Click on the continent of Africa on the map.",
       points: 10,
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1280px-World_map_-_low_resolution.svg.png", 
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1280px-World_map_-_low_resolution.svg.png", // Sample public domain map
       imageAltText: "A world map showing continents.",
       hotspots: [
+        // Coordinates are [x_percent, y_percent, width_percent, height_percent] for rect
+        // Coordinates are [cx_percent, cy_percent, radius_percent] for circle
+        // These are rough estimates for Africa on the provided map.
         { id: "africa_hs", shape: "rect", coords: [45, 40, 15, 30], description: "Africa" },
         { id: "s_america_hs", shape: "rect", coords: [28, 50, 12, 25], description: "South America" },
         { id: "n_america_hs", shape: "rect", coords: [15, 15, 25, 30], description: "North America" },
@@ -358,33 +318,23 @@ export const sampleQuiz: QuizConfig = {
     },
     {
       id: "q12_blockly",
-      questionType: "blockly_programming", 
+      questionType: "blockly_programming", // Updated type
       prompt: "Using the Blockly blocks, create a program that prints 'Hello World' to the console (conceptually).",
       points: 20,
       toolboxDefinition: basicToolboxXml,
       initialWorkspace: initialPrintBlockXml,
       solutionWorkspaceXML: solutionPrintHelloWorldXml,
-      learningObjective: "Understand basic text output in a block-based programming environment.",
-      explanation: "The solution involves using a 'text_print' block (or equivalent) with the text 'Hello World'.",
-      glossary: ["Blockly", "Print", "Console", "Workspace", "Toolbox"],
-      bloomLevel: "Applying",
-      difficulty: "medium",
-      category: "Computer Science",
-      topic: "Block Programming Basics",
-      course: "Intro to CS"
+      explanation: "The solution involves using a 'text_print' block (or equivalent) with the text 'Hello World'."
     },
     {
       id: "q13_scratch",
       questionType: "scratch_programming",
       prompt: "Using Scratch-style blocks, make the character say 'Hello World' when the green flag is clicked.",
       points: 20,
-      toolboxDefinition: scratchToolboxXml, 
+      toolboxDefinition: scratchToolboxXml, // Use a Scratch-like toolbox definition
       initialWorkspace: scratchInitialWorkspaceXml,
       solutionWorkspaceXML: scratchSolutionHelloWorldXml,
-      explanation: "The solution uses an 'event_whenflagclicked' block followed by a 'looks_say' block with 'Hello World'.",
-      category: "Computer Science",
-      topic: "Event-Driven Programming",
-      gradeBand: "Elementary"
+      explanation: "The solution uses an 'event_whenflagclicked' block followed by a 'looks_say' block with 'Hello World'."
     }
   ]
 };
