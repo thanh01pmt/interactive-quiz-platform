@@ -11,7 +11,8 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false, /* Changed from true */
+    "noEmit": false, /* Must be false for declarations to be emitted */
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
     /* Linting */
     "strict": true,
@@ -21,7 +22,7 @@
     /* Library specific */
     "declaration": true,
     "declarationDir": "dist/types",
-    "outDir": "dist", 
+    // "outDir": "dist", /* Removed: Let Rollup handle JS output dir */
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",
@@ -29,8 +30,9 @@
       "interactive-quiz-kit/*": ["src/*"],
       "~/*": ["src/*"]
     },
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "rootDir": "src" /* Specify rootDir to help with pathing for declarations */
   },
-  "include": ["src", "vitest.config.ts", "index.tsx", "App.tsx", "global.d.ts"],
-  "exclude": ["node_modules", "dist", "example"]
+  "include": ["src", "global.d.ts"], /* Simplified include for library build context; vitest, index.tsx, App.tsx are for local dev/test, not lib build */
+  "exclude": ["node_modules", "dist", "example", "**/*.test.ts", "**/*.spec.ts", "vitest.config.ts", "index.tsx", "App.tsx"]
 }

@@ -3,8 +3,8 @@ import React, { useState, useCallback } from 'react';
 import { QuizConfig } from '../../types'; // Corrected path
 import { Button } from './shared/Button';
 import { Card } from './shared/Card';
-import { generateIMSManifestXML } from '../../services/SCORMManifestGenerator'; // Corrected path
-import { generateLauncherHTML } from '../../services/HTMLLauncherGenerator'; // Corrected path
+import { generateIMSManifestXML } from 'src/services/SCORMManifestGenerator'; // Corrected path
+import { generateLauncherHTML } from 'src/services/HTMLLauncherGenerator'; // Corrected path
 import JSZip from 'jszip'; 
 
 interface QuizDataManagementProps {
