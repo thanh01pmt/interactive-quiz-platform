@@ -1,16 +1,16 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { QuizConfig, QuizQuestion, QuestionTypeStrings } from '../../types';
-import { Button } from '../shared/Button';
-import { Card } from '../shared/Card';
+import { QuizConfig, QuizQuestion, QuestionTypeStrings } from '../../types'; // Corrected path
+import { Button } from '../shared/Button'; // Corrected path
+import { Card } from '../shared/Card';   // Corrected path
 import { QuizSettingsForm } from './QuizSettingsForm';
 import { QuestionList } from './QuestionList';
 import { EditQuestionModal } from './EditQuestionModal';
 import { getNewQuestionTemplate } from './questionTemplates';
-import { AIQuestionGeneratorModal } from './AIQuestionGeneratorModal';
-import { AIQuestionFormState } from './AIQuestionGeneratorForm';
-import { generateQuizQuestion as generateAIQuestion } from '../../services/AIGenerationService';
-import { generateUniqueId } from '../../utils/idGenerators';
+import { AIQuestionGeneratorModal } from './AIQuestionGeneratorModal'; 
+import { AIQuestionFormState } from './AIQuestionGeneratorForm'; 
+import { generateQuizQuestion as generateAIQuestion } from '../../services/AIGenerationService'; // Corrected path
+import { generateUniqueId } from '../../utils/idGenerators'; // Corrected path
 
 
 interface QuizAuthoringToolProps {
@@ -26,7 +26,7 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
 }) => {
   const [quizConfig, setQuizConfig] = useState<QuizConfig>(
     initialQuizConfig || {
-      id: generateUniqueId('quiz_'),
+      id: generateUniqueId('quiz_'), 
       title: 'New Quiz',
       description: '',
       questions: [],
@@ -48,7 +48,7 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
       setQuizConfig(initialQuizConfig);
     } else {
        setQuizConfig({
-          id: generateUniqueId('quiz_'),
+          id: generateUniqueId('quiz_'), 
           title: 'New Quiz',
           description: '',
           questions: [],
@@ -106,7 +106,7 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
     setEditingQuestion(null);
     setEditingQuestionIndex(null);
   };
-
+  
   const handleQuestionOrderChange = (newOrderedQuestions: QuizQuestion[]) => {
     setQuizConfig(prev => ({ ...prev, questions: newOrderedQuestions }));
   };
@@ -119,6 +119,8 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
     }
     if (!quizConfig.id || quizConfig.id.trim() === "") {
         alert("Quiz ID is missing. Please ensure the quiz has an ID.");
+        // Optionally re-assign an ID if missing and desirable
+        // setQuizConfig(prev => ({ ...prev, id: generateUniqueId('quiz_')}));
         return;
     }
     onSaveQuiz(quizConfig);
@@ -144,12 +146,12 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
         // Ensure AI generated question gets a unique ID if not already provided by service
         const aiQuestionWithId = {
             ...generatedQuestion,
-            id: generatedQuestion.id || generateUniqueId('ai_q_')
+            id: generatedQuestion.id || generateUniqueId('ai_q_') 
         };
-        setEditingQuestion(aiQuestionWithId);
-        setEditingQuestionIndex(null);
-        setIsEditModalOpen(true);
-        setIsAIModalOpen(false);
+        setEditingQuestion(aiQuestionWithId); 
+        setEditingQuestionIndex(null);    
+        setIsEditModalOpen(true);         
+        setIsAIModalOpen(false);          
       } else {
         setAiError("AI failed to generate a valid question structure. Please try again or adjust your prompt.");
       }
@@ -174,7 +176,7 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
                  <Button onClick={onExitAuthoring} variant="secondary">Exit Without Saving</Button>
             </div>
         </div>
-
+        
         <QuizSettingsForm
           title={quizConfig.title}
           description={quizConfig.description || ''}
@@ -190,7 +192,7 @@ export const QuizAuthoringTool: React.FC<QuizAuthoringToolProps> = ({
           onEditQuestion={handleEditQuestion}
           onDeleteQuestion={handleDeleteQuestion}
           onOrderChange={handleQuestionOrderChange}
-          onOpenAIGenerator={handleOpenAIGenerator}
+          onOpenAIGenerator={handleOpenAIGenerator} 
         />
          {aiError && (
           <p className="text-sm text-red-400 mt-2 p-2 bg-red-900 bg-opacity-30 rounded text-center">{aiError}</p>

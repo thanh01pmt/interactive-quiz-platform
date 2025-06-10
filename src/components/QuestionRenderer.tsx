@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { QuizQuestion, UserAnswerType } from '../types';
+import { QuizQuestion, UserAnswerType } from '../types'; // Corrected
 import { MultipleChoiceQuestionUI } from './MultipleChoiceQuestionUI';
 import { MultipleResponseQuestionUI } from './MultipleResponseQuestionUI';
 import { FillInTheBlanksQuestionUI } from './FillInTheBlanksQuestionUI';
@@ -11,8 +11,8 @@ import { NumericQuestionUI } from './NumericQuestionUI';
 import { SequenceQuestionUI } from './SequenceQuestionUI';
 import { MatchingQuestionUI } from './MatchingQuestionUI';
 import { HotspotQuestionUI } from './HotspotQuestionUI';
-import { BlocklyProgrammingQuestionUI } from './BlocklyProgrammingQuestionUI'; // Renamed import
-import { ScratchProgrammingQuestionUI } from './ScratchProgrammingQuestionUI'; // Added import
+import { BlocklyProgrammingQuestionUI } from './BlocklyProgrammingQuestionUI';
+import { ScratchProgrammingQuestionUI } from './ScratchProgrammingQuestionUI';
 import { Card } from './shared/Card';
 
 interface QuestionRendererProps {
@@ -22,7 +22,7 @@ interface QuestionRendererProps {
   questionNumber: number;
   totalQuestions: number;
   showCorrectAnswer?: boolean;
-  shuffleOptions?: boolean; 
+  shuffleOptions?: boolean;
 }
 
 export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
@@ -117,7 +117,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onAnswerChange={onAnswerChange}
             userAnswer={userAnswer}
             showCorrectAnswer={showCorrectAnswer}
-            shuffleOptions={shuffleOptions && question.shuffleOptions}
+            shuffleOptions={shuffleOptions && question.shuffleOptions} // Specific Matching Q can override global
           />
         );
       case 'hotspot':
@@ -129,16 +129,16 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             showCorrectAnswer={showCorrectAnswer}
           />
         );
-      case 'blockly_programming': // Renamed case
+      case 'blockly_programming':
         return (
-          <BlocklyProgrammingQuestionUI // Renamed component
+          <BlocklyProgrammingQuestionUI
             question={question}
             onAnswerChange={onAnswerChange}
             userAnswer={userAnswer}
             showCorrectAnswer={showCorrectAnswer}
           />
         );
-      case 'scratch_programming': // Added case
+      case 'scratch_programming':
         return (
           <ScratchProgrammingQuestionUI
             question={question}
@@ -148,7 +148,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
           />
         );
       default:
-        // This default case helps catch unhandled question types during development
         const _exhaustiveCheck: never = question;
         console.warn("Unsupported question type in QuestionRenderer:", _exhaustiveCheck);
         return <p className="text-red-400">Error: Unsupported question type.</p>;
@@ -172,8 +171,10 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         <p className="text-sm text-slate-400">Question {questionNumber} of {totalQuestions}</p>
         {question.points && <p className="text-sm text-sky-400">Points: {question.points}</p>}
       </div>
-      <h2 className="text-xl font-semibold text-slate-100 mb-6">{question.prompt}</h2>
-      {renderQuestionSpecificUI()}
+      <h2 className="text-xl font-semibold text-slate-100 mb-6" id={`question-prompt-${question.id}`}>{question.prompt}</h2>
+      <div role="group" aria-labelledby={`question-prompt-${question.id}`}>
+        {renderQuestionSpecificUI()}
+      </div>
       {showCorrectAnswer && (
         <div className="mt-6 space-y-3">
           {question.learningObjective && (

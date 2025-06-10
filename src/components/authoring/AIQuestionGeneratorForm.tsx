@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { QuestionTypeStrings } from '../../types';
-import { Button } from '../shared/Button';
+import { QuestionTypeStrings } from '../../types'; // Corrected path
+import { Button } from '../shared/Button'; // Corrected path
 
 export interface AIQuestionFormState {
   topic: string;
@@ -79,7 +79,7 @@ export const AIQuestionGeneratorForm: React.FC<AIQuestionGeneratorFormProps> = (
             <p className="text-xs text-yellow-400 mt-1">Note: AI generation for '{supportedQuestionTypes.find(q => q.value === questionType)?.label}' is experimental and may not yield optimal results.</p>
         )}
       </div>
-
+      
       <div>
         <label htmlFor="ai_difficulty" className="block font-medium text-sky-300 mb-1">
           Difficulty

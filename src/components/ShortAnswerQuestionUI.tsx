@@ -32,7 +32,7 @@ export const ShortAnswerQuestionUI: React.FC<ShortAnswerQuestionUIProps> = ({
   let borderColor = 'border-slate-600 focus:border-sky-500';
   if (showCorrectAnswer) {
     const userAnswerTrimmed = currentAnswer.trim();
-    const isCorrect = question.acceptedAnswers.some(accAns => 
+    const isCorrect = question.acceptedAnswers.some(accAns =>
         question.isCaseSensitive ? accAns.trim() === userAnswerTrimmed : accAns.trim().toLowerCase() === userAnswerTrimmed.toLowerCase()
     );
     borderColor = isCorrect ? 'border-green-500' : 'border-red-500';

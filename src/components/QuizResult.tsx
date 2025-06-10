@@ -4,13 +4,13 @@ import {
   QuizResult as QuizResultType,
   QuizConfig,
   QuizQuestion,
-  PerformanceMetric, // Import PerformanceMetric
+  PerformanceMetric,
   PerformanceByLearningObjective,
   PerformanceByCategory,
   PerformanceByTopic,
   PerformanceByDifficulty,
   PerformanceByBloomLevel
-} from '../types';
+} from '../types'; // Corrected
 import { Button } from './shared/Button';
 import { Card } from './shared/Card';
 import { QuestionRenderer } from './QuestionRenderer';
@@ -50,12 +50,15 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
       <summary
         className="px-4 py-3 font-semibold text-slate-200 cursor-pointer hover:bg-slate-600 transition-colors flex justify-between items-center"
         onClick={(e) => { e.preventDefault(); setIsOpen(!isOpen); }}
+        role="button"
+        aria-expanded={isOpen}
+        aria-controls={`section-content-${title.replace(/\s+/g, '-').toLowerCase()}`}
       >
         {title}
-        <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>&#x276F;</span>
+        <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`} aria-hidden="true">&#x276F;</span>
       </summary>
       {isOpen && (
-        <div className="px-4 py-3 border-t border-slate-600">
+        <div className="px-4 py-3 border-t border-slate-600" id={`section-content-${title.replace(/\s+/g, '-').toLowerCase()}`}>
           {children}
         </div>
       )}
@@ -66,7 +69,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
 
 interface PerformanceTableProps<TItem extends PerformanceMetric & { [key: string]: any }> {
   data: TItem[] | undefined;
-  dataKeyName: keyof TItem; 
+  dataKeyName: keyof TItem;
   titleKeyName: string;
   passingScorePercent?: number;
 }
@@ -245,7 +248,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({ result, quizConfig: qc, 
                     questionNumber={index + 1}
                     totalQuestions={qc.questions.length}
                     showCorrectAnswer={true}
-                    shuffleOptions={qc.settings?.shuffleOptions}
+                    shuffleOptions={qc.settings?.shuffleOptions} // Use quiz-level shuffle setting for review consistency
                   />
                 </div>
               );

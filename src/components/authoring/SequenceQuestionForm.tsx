@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { SequenceQuestion, SequenceItem, BaseQuestion } from '../../types';
+import { SequenceQuestion, SequenceItem, BaseQuestion } from '../../types'; // Corrected path
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
-import { Button } from '../shared/Button';
-import { generateUniqueId } from '../../utils/idGenerators';
+import { Button } from '../shared/Button'; // Corrected path
+import { generateUniqueId } from '../../utils/idGenerators'; // Corrected path
 
 interface SequenceQuestionFormProps {
   question: SequenceQuestion;
@@ -76,8 +76,8 @@ export const SequenceQuestionForm: React.FC<SequenceQuestionFormProps> = ({
         {items.map((item, index) => (
           <div key={item.id || index} className="flex items-center space-x-2 bg-slate-750 p-2 rounded">
             <div className="flex flex-col space-y-0.5">
-                 <Button type="button" onClick={() => moveItem(index, 'up')} disabled={index === 0} size="sm" variant="ghost" className="!p-0.5 h-5 w-5 leading-none text-xs disabled:opacity-30">▲</Button>
-                 <Button type="button" onClick={() => moveItem(index, 'down')} disabled={index === items.length - 1} size="sm" variant="ghost" className="!p-0.5 h-5 w-5 leading-none text-xs disabled:opacity-30">▼</Button>
+                 <Button type="button" onClick={() => moveItem(index, 'up')} disabled={index === 0} size="sm" variant="ghost" className="!p-0.5 h-5 w-5 leading-none text-xs disabled:opacity-30" aria-label={`Move item ${index + 1} up`}>▲</Button>
+                 <Button type="button" onClick={() => moveItem(index, 'down')} disabled={index === items.length - 1} size="sm" variant="ghost" className="!p-0.5 h-5 w-5 leading-none text-xs disabled:opacity-30" aria-label={`Move item ${index + 1} down`}>▼</Button>
             </div>
             <span className="text-slate-400 text-xs w-6 text-center">{index + 1}.</span>
             <input
@@ -89,7 +89,7 @@ export const SequenceQuestionForm: React.FC<SequenceQuestionFormProps> = ({
               className="flex-grow p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 text-sm focus:ring-sky-500 focus:border-sky-500"
             />
             {items.length > 2 && (
-              <Button type="button" onClick={() => handleRemoveItem(index)} variant="danger" size="sm" className="!p-1.5">
+              <Button type="button" onClick={() => handleRemoveItem(index)} variant="danger" size="sm" className="!p-1.5" aria-label={`Remove item ${index + 1}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </Button>
             )}

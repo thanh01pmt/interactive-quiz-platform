@@ -1,8 +1,11 @@
 
-import { QuizConfig } from '../types';
+import { QuizConfig } from '../types'; // Corrected path
 
 // Helper function to escape XML characters
 const escapeXml = (unsafe: string): string => {
+  if (typeof unsafe !== 'string') {
+    return '';
+  }
   return unsafe.replace(/[<>&'"]/g, (c) => {
     switch (c) {
       case '<': return '&lt;';
@@ -28,42 +31,43 @@ export const generateIMSManifestXML = (
   const itemIdentifier = `ITEM-${quizIdentifier}`;
   const resourceIdentifier = `RES-${quizIdentifier}`;
 
-  const scormVersion = quizConfig.settings?.scorm?.version || "1.2"; // Default to 1.2
+  const scormVersionSetting = quizConfig.settings?.scorm?.version || "1.2"; // Default to 1.2
   let scormSchemaVersion = "1.2";
-  let adlcpNamespace = "adlcp";
-  let scormType = "sco"; // Common for both
+  let adlcpNamespace = "adlcp"; // Default for SCORM 1.2
+  let imsssNamespace = ""; // Not used by default for 1.2
 
-  if (scormVersion === "2004") {
+  if (scormVersionSetting === "2004") {
     scormSchemaVersion = "2004 4th Edition"; // Or other editions like "2004 3rd Edition"
-    adlcpNamespace = "adlseq"; // Or adlnav depending on needs, adlcp is common for basic content
+    adlcpNamespace = "adlcp"; // Still common for some metadata in 2004
+    imsssNamespace = `xmlns:imsss="http://www.imsglobal.org/xsd/imsss"`;
   }
   
+  const scormType = "sco"; 
+
   // List of all files to be included in the manifest's resource section
   const fileList = [
     launcherPath,
     quizDataPath,
     libraryJSPath,
     blocklyCSSPath,
-    // Add any other common library assets here if they were separate
-    // e.g., 'lib/some-other-asset.js'
   ];
 
-  const filesXML = fileList.map(file => `      <file href="${escapeXml(file)}" />`).join('\n');
+  const filesXML = fileList.map(file => `      <file href="${escapeXml(file)}" />`).join('\\n');
 
   const manifestXML = `<?xml version="1.0" standalone="no"?>
 <manifest identifier="${quizIdentifier}_MANIFEST" version="1.1"
           xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
-          xmlns:imsss="http://www.imsglobal.org/xsd/imsss"
+          ${imsssNamespace} 
           xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd
                               http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3.xsd
-                              http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd">
+                              ${scormVersionSetting === "2004" ? "http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd" : ""}">
 
   <metadata>
     <schema>ADL SCORM</schema>
     <schemaversion>${scormSchemaVersion}</schemaversion>
-    <adlcp:location>metadata.xml</adlcp:location> <!-- Optional: if you provide a separate metadata XML -->
+    <!-- Optional: <adlcp:location>metadata.xml</adlcp:location> -->
   </metadata>
 
   <organizations default="${organizationIdentifier}">
@@ -71,18 +75,31 @@ export const generateIMSManifestXML = (
       <title>${quizTitle}</title>
       <item identifier="${itemIdentifier}" identifierref="${resourceIdentifier}" isvisible="true">
         <title>${quizTitle}</title>
-        ${scormVersion === "2004" 
-          ? `<imsss:sequencing><imsss:controlMode choice="true" flow="true"/></imsss:sequencing>` 
-          : `<adlcp:dataFromLMS/>` /* For SCORM 1.2, can be used to pass launch data */
+        ${scormVersionSetting === "2004"
+          ? `<imsss:sequencing><imsss:controlMode choice="true" flow="true"/></imsss:sequencing>`
+          : `<adlcp:dataFromLMS/>`
         }
-        ${scormVersion === "1.2" ? `<adlcp:masteryscore>${quizConfig.settings?.passingScorePercent || '70'}</adlcp:masteryscore>` : ''}
+        ${scormVersionSetting === "1.2" && quizConfig.settings?.passingScorePercent !== undefined 
+          ? `<adlcp:masteryscore>${quizConfig.settings.passingScorePercent}</adlcp:masteryscore>` 
+          : ''
+        }
+        ${scormVersionSetting === "2004" && quizConfig.settings?.passingScorePercent !== undefined
+          ? `<imsss:sequencing>
+               <imsss:objectives>
+                 <imsss:primaryObjective satisfiedByMeasure="true" objectiveID="PRIMARYOBJ">
+                   <imsss:minNormalizedMeasure>${(quizConfig.settings.passingScorePercent / 100).toFixed(2)}</imsss:minNormalizedMeasure>
+                 </imsss:primaryObjective>
+               </imsss:objectives>
+             </imsss:sequencing>`
+          : ''
+        }
       </item>
     </organization>
   </organizations>
 
   <resources>
     <resource identifier="${resourceIdentifier}" type="webcontent"
-              ${adlcpNamespace}:scormtype="${scormType}" href="${escapeXml(launcherPath)}">
+              adlcp:scormtype="${scormType}" href="${escapeXml(launcherPath)}">
 ${filesXML}
     </resource>
   </resources>

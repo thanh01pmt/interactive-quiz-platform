@@ -27,7 +27,7 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
           setImageSize({ width: imgElement.offsetWidth, height: imgElement.offsetHeight });
         }
       };
-      
+
       if (imgElement.complete) { // If image already loaded
           handleResize();
       } else {
@@ -44,7 +44,7 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
     const rect = imageRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
-    
+
     const clickXPercent = (clickX / rect.width) * 100;
     const clickYPercent = (clickY / rect.height) * 100;
 
@@ -54,12 +54,12 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
     for (const hotspot of question.hotspots) {
       if (isPointInHotspot(clickXPercent, clickYPercent, hotspot)) {
         clickedHotspotId = hotspot.id;
-        break; 
+        break;
       }
     }
-    onAnswerChange(clickedHotspotId); 
+    onAnswerChange(clickedHotspotId);
   };
-  
+
   const isPointInHotspot = (px: number, py: number, hotspot: HotspotArea): boolean => {
     const [coord1, coord2, coord3, coord4] = hotspot.coords; // All coords are percentages
     if (hotspot.shape === 'rect') { // x, y, width, height
@@ -73,7 +73,14 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
 
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto" onClick={handleImageClick}>
+    <div
+      className="relative w-full max-w-2xl mx-auto"
+      onClick={handleImageClick}
+      onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleImageClick(e as any);}} // Basic keyboard interaction
+      tabIndex={showCorrectAnswer ? -1 : 0}
+      role="button"
+      aria-label={question.imageAltText || 'Hotspot image area, click to select a region'}
+    >
       <img
         ref={imageRef}
         src={question.imageUrl}
@@ -104,8 +111,10 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
           style.height = `${c3 * 2}%`;// diameter
           style.borderRadius = '50%';
         }
-        
+
         let displayHotspot = false;
+        let hotspotAriaLabel = hotspot.description || `Hotspot area ${hotspot.id}`;
+
         if (showCorrectAnswer) {
             displayHotspot = true;
             const isCorrectHotspot = question.correctHotspotIds.includes(hotspot.id);
@@ -114,24 +123,26 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
             if (isCorrectHotspot && isUserClickedThisHotspot) {
                 style.backgroundColor = 'rgba(74, 222, 128, 0.5)'; // Green, correct and clicked
                 style.borderColor = 'rgb(34, 197, 94)';
+                hotspotAriaLabel += " (Correctly selected)";
             } else if (isCorrectHotspot && !isUserClickedThisHotspot) {
                 style.backgroundColor = 'rgba(59, 130, 246, 0.4)'; // Blue, correct but not clicked
                 style.borderColor = 'rgb(37, 99, 235)';
+                 hotspotAriaLabel += " (Correct, not selected)";
             } else if (!isCorrectHotspot && isUserClickedThisHotspot) {
-                 // User clicked an incorrect hotspot, this one is not it, so just a faint border maybe if we show all
-                 // But the actual clicked incorrect hotspot will be handled by userClickCoords marker
-                 // So we don't need special style here for non-correct, non-clicked.
-            } else {
-                 // Not correct, not clicked - make it very subtle or don't show
+                 // User clicked an incorrect hotspot; this specific area is not it.
+                 // The user's actual click marker will handle visual feedback for the incorrect click.
+                 // If this hotspot itself was the one incorrectly clicked, its style for that is implicitly handled by the userClickCoords marker
+            } else { // Not correct, not clicked
                  style.borderColor = 'rgba(100, 116, 139, 0.3)'; // Faint gray
                  style.backgroundColor = 'rgba(100, 116, 139, 0.1)';
+                 hotspotAriaLabel += " (Incorrect, not selected)";
             }
         }
 
 
-        return displayHotspot ? <div key={hotspot.id} style={style} /> : null;
+        return displayHotspot ? <div key={hotspot.id} style={style} aria-label={hotspotAriaLabel} role="img" /> : null;
       })}
-      
+
       {/* Show user's click marker when answers are revealed */}
       {showCorrectAnswer && userClickCoords && imageSize && (
          (() => {
@@ -150,7 +161,10 @@ export const HotspotQuestionUI: React.FC<HotspotQuestionUIProps> = ({
                     transform: 'translate(-50%, -50%)',
                     pointerEvents: 'none',
                     boxShadow: '0 0 5px rgba(0,0,0,0.5)'
-                }} title={`Your click (${isClickCorrect? 'Correct':'Incorrect'})`}/>
+                }} title={`Your click (${isClickCorrect? 'Correct':'Incorrect'})`}
+                   aria-label={`Your click location. Status: ${isClickCorrect ? 'Correct' : 'Incorrect'}.`}
+                   role="img"
+                />
             );
          })()
       )}

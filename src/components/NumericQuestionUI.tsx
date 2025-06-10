@@ -31,7 +31,7 @@ export const NumericQuestionUI: React.FC<NumericQuestionUIProps> = ({
         onAnswerChange(value);
     }
   };
-  
+
   let borderColor = 'border-slate-600 focus:border-sky-500';
   let isCorrect = false;
   if (typeof userAnswer === 'string') {

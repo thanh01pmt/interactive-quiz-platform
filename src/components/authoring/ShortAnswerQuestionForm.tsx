@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { ShortAnswerQuestion, BaseQuestion } from '../../types';
+import { ShortAnswerQuestion, BaseQuestion } from '../../types'; // Corrected path
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
-import { Button } from '../shared/Button';
+import { Button } from '../shared/Button'; // Corrected path
 
 interface ShortAnswerQuestionFormProps {
   question: ShortAnswerQuestion;
@@ -35,7 +35,10 @@ export const ShortAnswerQuestionForm: React.FC<ShortAnswerQuestionFormProps> = (
   const handleAddAcceptedAnswer = () => {
     const newAcceptedAnswers = [...acceptedAnswers, ''];
     setAcceptedAnswers(newAcceptedAnswers);
-    onQuestionChange({ ...question, acceptedAnswers: newAcceptedAnswers.filter(a => a.trim() !== '') });
+    // Ensure onQuestionChange is called with the potentially empty new string filtered out if not desired.
+    // However, for UI it's good to show the empty input field.
+    // For saving, filter happens in handleAcceptedAnswerChange on blur/change
+    onQuestionChange({ ...question, acceptedAnswers: newAcceptedAnswers });
   };
 
   const handleRemoveAcceptedAnswer = (index: number) => {
@@ -69,7 +72,7 @@ export const ShortAnswerQuestionForm: React.FC<ShortAnswerQuestionFormProps> = (
               className="flex-grow p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 text-sm focus:ring-sky-500 focus:border-sky-500"
             />
             {acceptedAnswers.length > 1 && (
-               <Button type="button" onClick={() => handleRemoveAcceptedAnswer(index)} variant="danger" size="sm" className="!p-1.5">
+               <Button type="button" onClick={() => handleRemoveAcceptedAnswer(index)} variant="danger" size="sm" className="!p-1.5" aria-label={`Remove accepted answer ${index + 1}`}>
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </Button>
             )}

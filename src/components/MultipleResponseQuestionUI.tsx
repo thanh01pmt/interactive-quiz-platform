@@ -65,6 +65,7 @@ export const MultipleResponseQuestionUI: React.FC<MultipleResponseQuestionUIProp
               onChange={() => handleChange(option.id)}
               className="sr-only"
               disabled={showCorrectAnswer}
+              aria-label={option.text}
             />
              <span className="text-slate-100">{option.text}</span>
           </label>

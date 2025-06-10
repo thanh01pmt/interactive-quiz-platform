@@ -10,7 +10,7 @@ const loadScript = (src: string): Promise<void> => {
       resolve();
       return;
     }
-    
+
     const script = document.createElement('script');
     script.src = src;
     script.async = true;
@@ -28,7 +28,7 @@ const loadScript = (src: string): Promise<void> => {
 
 const loadScratchLikeBlockly = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (typeof (window as any).Blockly?.JavaScript !== 'undefined' && 
+    if (typeof (window as any).Blockly?.JavaScript !== 'undefined' &&
         typeof (window as any).Blockly?.Blocks !== 'undefined' &&
         (window as any).Blockly?.Themes?.scratch) { // Check if scratch theme is also defined as a signal
       console.log("Scratch-like Blockly already fully loaded.");
@@ -53,9 +53,9 @@ const loadScratchLikeBlockly = (): Promise<void> => {
         if (BlocklyGlobal.utils?.global) {
           BlocklyGlobal.utils.global.blocklyPath = blocklyMediaPath;
         } else {
-          BlocklyGlobal.MEDIA_PATH = blocklyMediaPath; 
+          BlocklyGlobal.MEDIA_PATH = blocklyMediaPath;
         }
-        
+
         return Promise.all([
           loadScript(blocklyBlocksSrc),
           loadScript(blocklyJsGeneratorSrc)
@@ -117,7 +117,7 @@ const useScratchBlocksLoader = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
-  
+
   const attemptLoad = useCallback(() => {
     setLoadError(null);
     setIsReady(false);
@@ -170,7 +170,7 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
   const workspaceRef = useRef<any>(null);
   const [isInitializingComponent, setIsInitializingComponent] = useState(false);
   const [componentError, setComponentError] = useState<string | null>(null);
-  
+
   const { isLoading: scratchLoading, loadError: scratchLoadError, isReady: scratchReady, retry } = useScratchBlocksLoader();
 
   const updateAnswer = useCallback(() => {
@@ -198,47 +198,47 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
     console.log("Defining Scratch custom blocks...");
     // Event blocks
     if (!Blockly.Blocks['event_whenflagclicked']) {
-      Blockly.Blocks['event_whenflagclicked'] = { init: function() { this.appendDummyInput().appendField("when 🏁 clicked"); this.setNextStatement(true, null); this.setTooltip("Runs when the green flag is clicked"); this.setStyle('event_blocks'); } };
+      Blockly.Blocks['event_whenflagclicked'] = { init: function(this: any) { this.appendDummyInput().appendField("when 🏁 clicked"); this.setNextStatement(true, null); this.setTooltip("Runs when the green flag is clicked"); this.setStyle('event_blocks'); } };
     }
     if (!Blockly.Blocks['event_whenkeypressed']) {
-      Blockly.Blocks['event_whenkeypressed'] = { init: function() { this.appendDummyInput().appendField("when").appendField(new Blockly.FieldDropdown([["space","SPACE"], ["up arrow","UP"], ["down arrow","DOWN"], ["left arrow","LEFT"], ["right arrow","RIGHT"], ["any","ANY"], ["a","A"], ["b","B"], ["c","C"], ["1","ONE"]]), "KEY").appendField("key pressed"); this.setNextStatement(true, null); this.setTooltip("Runs when the specified key is pressed"); this.setStyle('event_blocks');}};
+      Blockly.Blocks['event_whenkeypressed'] = { init: function(this: any) { this.appendDummyInput().appendField("when").appendField(new Blockly.FieldDropdown([["space","SPACE"], ["up arrow","UP"], ["down arrow","DOWN"], ["left arrow","LEFT"], ["right arrow","RIGHT"], ["any","ANY"], ["a","A"], ["b","B"], ["c","C"], ["1","ONE"]]), "KEY").appendField("key pressed"); this.setNextStatement(true, null); this.setTooltip("Runs when the specified key is pressed"); this.setStyle('event_blocks');}};
     }
     // Motion blocks
     if (!Blockly.Blocks['motion_movesteps']) {
-      Blockly.Blocks['motion_movesteps'] = { init: function() { this.appendValueInput("STEPS").setCheck("Number").appendField("move"); this.appendDummyInput().appendField("steps"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Move forward by the specified number of steps"); this.setStyle('motion_blocks'); }};
+      Blockly.Blocks['motion_movesteps'] = { init: function(this: any) { this.appendValueInput("STEPS").setCheck("Number").appendField("move"); this.appendDummyInput().appendField("steps"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Move forward by the specified number of steps"); this.setStyle('motion_blocks'); }};
     }
     if (!Blockly.Blocks['motion_turnright']) {
-      Blockly.Blocks['motion_turnright'] = { init: function() { this.appendValueInput("DEGREES").setCheck("Number").appendField("turn ↻"); this.appendDummyInput().appendField("degrees"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Turn clockwise by the specified degrees"); this.setStyle('motion_blocks'); }};
+      Blockly.Blocks['motion_turnright'] = { init: function(this: any) { this.appendValueInput("DEGREES").setCheck("Number").appendField("turn ↻"); this.appendDummyInput().appendField("degrees"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Turn clockwise by the specified degrees"); this.setStyle('motion_blocks'); }};
     }
     if (!Blockly.Blocks['motion_turnleft']) {
-      Blockly.Blocks['motion_turnleft'] = { init: function() { this.appendValueInput("DEGREES").setCheck("Number").appendField("turn ↺"); this.appendDummyInput().appendField("degrees"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Turn counter-clockwise by the specified degrees"); this.setStyle('motion_blocks'); }};
+      Blockly.Blocks['motion_turnleft'] = { init: function(this: any) { this.appendValueInput("DEGREES").setCheck("Number").appendField("turn ↺"); this.appendDummyInput().appendField("degrees"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Turn counter-clockwise by the specified degrees"); this.setStyle('motion_blocks'); }};
     }
     // Looks blocks
     if (!Blockly.Blocks['looks_say']) {
-      Blockly.Blocks['looks_say'] = { init: function() { this.appendValueInput("MESSAGE").setCheck("String").appendField("say"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Display a speech bubble with the message"); this.setStyle('looks_blocks'); }};
+      Blockly.Blocks['looks_say'] = { init: function(this: any) { this.appendValueInput("MESSAGE").setCheck("String").appendField("say"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Display a speech bubble with the message"); this.setStyle('looks_blocks'); }};
     }
      if (!Blockly.Blocks['looks_think']) {
-      Blockly.Blocks['looks_think'] = { init: function() { this.appendValueInput("MESSAGE").setCheck("String").appendField("think"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Display a thought bubble with the message"); this.setStyle('looks_blocks'); }};
+      Blockly.Blocks['looks_think'] = { init: function(this: any) { this.appendValueInput("MESSAGE").setCheck("String").appendField("think"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Display a thought bubble with the message"); this.setStyle('looks_blocks'); }};
     }
     // Control blocks
     if(!Blockly.Blocks['control_wait']){
-      Blockly.Blocks['control_wait'] = { init: function() { this.appendValueInput("DURATION").setCheck("Number").appendField("wait"); this.appendDummyInput().appendField("seconds"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Pause for the specified number of seconds"); this.setStyle('control_blocks'); }};
+      Blockly.Blocks['control_wait'] = { init: function(this: any) { this.appendValueInput("DURATION").setCheck("Number").appendField("wait"); this.appendDummyInput().appendField("seconds"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Pause for the specified number of seconds"); this.setStyle('control_blocks'); }};
     }
     if(!Blockly.Blocks['control_repeat']){
-        Blockly.Blocks['control_repeat'] = { init: function() { this.appendValueInput("TIMES").setCheck("Number").appendField("repeat"); this.appendStatementInput("SUBSTACK").setCheck(null); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Repeat the enclosed blocks the specified number of times"); this.setStyle('control_blocks'); }};
+        Blockly.Blocks['control_repeat'] = { init: function(this: any) { this.appendValueInput("TIMES").setCheck("Number").appendField("repeat"); this.appendStatementInput("SUBSTACK").setCheck(null); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Repeat the enclosed blocks the specified number of times"); this.setStyle('control_blocks'); }};
     }
     if(!Blockly.Blocks['control_forever']){
-        Blockly.Blocks['control_forever'] = { init: function() { this.appendDummyInput().appendField("forever"); this.appendStatementInput("SUBSTACK").setCheck(null); this.setPreviousStatement(true, null); this.setColour('#FFAB19'); this.setTooltip("Repeat the enclosed blocks forever"); this.setStyle('control_blocks'); }};
+        Blockly.Blocks['control_forever'] = { init: function(this: any) { this.appendDummyInput().appendField("forever"); this.appendStatementInput("SUBSTACK").setCheck(null); this.setPreviousStatement(true, null); this.setTooltip("Repeat the enclosed blocks forever"); this.setStyle('control_blocks'); }};
     }
     if(!Blockly.Blocks['control_if']){
-        Blockly.Blocks['control_if'] = { init: function() { this.appendValueInput("CONDITION").setCheck("Boolean").appendField("if"); this.appendDummyInput().appendField("then"); this.appendStatementInput("SUBSTACK").setCheck(null); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Execute blocks if condition is true"); this.setStyle('control_blocks'); }};
+        Blockly.Blocks['control_if'] = { init: function(this: any) { this.appendValueInput("CONDITION").setCheck("Boolean").appendField("if"); this.appendDummyInput().appendField("then"); this.appendStatementInput("SUBSTACK").setCheck(null); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setTooltip("Execute blocks if condition is true"); this.setStyle('control_blocks'); }};
     }
      // Operator blocks
     if(!Blockly.Blocks['operator_add']){
-        Blockly.Blocks['operator_add'] = { init: function() { this.appendValueInput("NUM1").setCheck("Number"); this.appendValueInput("NUM2").setCheck("Number").appendField("+"); this.setOutput(true, "Number"); this.setTooltip("Add two numbers"); this.setStyle('operators_blocks'); }};
+        Blockly.Blocks['operator_add'] = { init: function(this: any) { this.appendValueInput("NUM1").setCheck("Number"); this.appendValueInput("NUM2").setCheck("Number").appendField("+"); this.setOutput(true, "Number"); this.setTooltip("Add two numbers"); this.setStyle('operators_blocks'); }};
     }
     if(!Blockly.Blocks['operator_subtract']){
-        Blockly.Blocks['operator_subtract'] = { init: function() { this.appendValueInput("NUM1").setCheck("Number"); this.appendValueInput("NUM2").setCheck("Number").appendField("-"); this.setOutput(true, "Number"); this.setTooltip("Subtract two numbers"); this.setStyle('operators_blocks'); }};
+        Blockly.Blocks['operator_subtract'] = { init: function(this: any) { this.appendValueInput("NUM1").setCheck("Number"); this.appendValueInput("NUM2").setCheck("Number").appendField("-"); this.setOutput(true, "Number"); this.setTooltip("Subtract two numbers"); this.setStyle('operators_blocks'); }};
     }
     console.log("Scratch custom blocks defined (or ensured).");
   }, []);
@@ -256,7 +256,7 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
         setIsInitializingComponent(false);
         return;
     }
-    
+
     try {
         defineScratchCustomBlocks(LocalBlockly);
     } catch (blockDefError) {
@@ -378,7 +378,7 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
       setComponentError(`Failed to initialize Scratch workspace: ${e instanceof Error ? e.message : String(e)}`);
       setIsInitializingComponent(false);
     }
-  }, [scratchReady, question.id, question.toolboxDefinition, question.initialWorkspace, question.solutionWorkspaceXML, showCorrectAnswer, updateAnswer, defineScratchCustomBlocks]); // Removed userAnswer
+  }, [scratchReady, question.id, question.toolboxDefinition, question.initialWorkspace, question.solutionWorkspaceXML, showCorrectAnswer, updateAnswer, defineScratchCustomBlocks]);
 
   useEffect(() => {
     if (scratchReady && blocklyDivRef.current) {
@@ -397,7 +397,7 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
   }, [scratchReady, question.id, initializeScratchWorkspace]);
 
 
-  useEffect(() => { 
+  useEffect(() => {
     if (scratchReady && workspaceRef.current && !showCorrectAnswer && typeof userAnswer === 'string' && userAnswer.trim().startsWith('<xml')) {
       const LocalBlockly = (window as any).Blockly;
       if (!LocalBlockly?.Xml || !workspaceRef.current) return;
@@ -433,6 +433,7 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
   }, [scratchReady]);
 
   const workspaceHeight = showCorrectAnswer ? '350px' : '500px';
+  const workspaceContainerId = `scratch-workspace-container-${question.id}`;
 
   if (scratchLoading) {
     return <div style={{ height: workspaceHeight, display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'#f0f0f0', borderRadius:'8px'}}><p className="animate-pulse text-slate-600">Loading Scratch Environment...</p></div>;
@@ -443,12 +444,17 @@ export const ScratchProgrammingQuestionUI: React.FC<ScratchQuestionComponentProp
 
   return (
     <div className="space-y-4 scratch-theme"> {/* Added scratch-theme class here */}
-      <div ref={blocklyDivRef} style={{ height: workspaceHeight, width: '100%', borderRadius: '12px', border: `1px solid ${componentError ? '#ef4444' : '#e2e8f0'}`, backgroundColor: '#ffffff', position: 'relative', boxShadow: '0 2px 4px rgba(0,0,0,0.05)'}}>
+      <div
+        id={workspaceContainerId}
+        ref={blocklyDivRef}
+        style={{ height: workspaceHeight, width: '100%', borderRadius: '12px', border: `1px solid ${componentError ? '#ef4444' : '#e2e8f0'}`, backgroundColor: '#ffffff', position: 'relative', boxShadow: '0 2px 4px rgba(0,0,0,0.05)'}}
+        aria-label={`Scratch programming workspace for question: ${question.prompt}`}
+      >
         {(isInitializingComponent || (!workspaceRef.current && scratchReady && !scratchLoadError && !componentError)) && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl z-10"><p className="text-slate-500 animate-pulse">Initializing Scratch Workspace...</p></div>
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl z-10" aria-live="polite"><p className="text-slate-500 animate-pulse">Initializing Scratch Workspace...</p></div>
         )}
         {componentError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-50 bg-opacity-90 rounded-xl p-4 z-10 text-center"><p className="text-red-600 text-sm mb-2">Workspace Error: {componentError}</p><button onClick={initializeScratchWorkspace} className="px-3 py-1 bg-red-500 text-white rounded text-sm">Retry Init</button></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-50 bg-opacity-90 rounded-xl p-4 z-10 text-center" role="alert"><p className="text-red-600 text-sm mb-2">Workspace Error: {componentError}</p><button onClick={initializeScratchWorkspace} className="px-3 py-1 bg-red-500 text-white rounded text-sm">Retry Init</button></div>
         )}
       </div>
       {showCorrectAnswer && question.solutionWorkspaceXML && userAnswer !== question.solutionWorkspaceXML && !componentError && (

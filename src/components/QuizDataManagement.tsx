@@ -1,11 +1,11 @@
 
 import React, { useState, useCallback } from 'react';
-import { QuizConfig } from '../types';
+import { QuizConfig } from '../../types'; // Corrected path
 import { Button } from './shared/Button';
 import { Card } from './shared/Card';
-import { generateIMSManifestXML } from '../services/SCORMManifestGenerator';
-import { generateLauncherHTML } from '../services/HTMLLauncherGenerator';
-import JSZip from 'jszip'; // Import JSZip
+import { generateIMSManifestXML } from '../../services/SCORMManifestGenerator'; // Corrected path
+import { generateLauncherHTML } from '../../services/HTMLLauncherGenerator'; // Corrected path
+import JSZip from 'jszip'; 
 
 interface QuizDataManagementProps {
   onQuizLoad: (quiz: QuizConfig) => void;
@@ -108,21 +108,23 @@ export const QuizDataManagement: React.FC<QuizDataManagementProps> = ({ onQuizLo
       zip.file(launcherPath, launcherHTML);
       zip.file(quizDataPath, quizDataJSON);
       
-      // Create lib folder (even if empty, for instruction clarity)
-      zip.folder('lib');
+      zip.folder('lib'); // Create lib folder
 
-      // Fetch and add blockly-styles.css
+      // Attempt to fetch blockly-styles.css. This assumes the app serving this component
+      // (e.g., the example app) makes blockly-styles.css available at its root public path.
       try {
-        const response = await fetch('/blockly-styles.css'); // Assumes it's in public folder of example
+        const response = await fetch('/blockly-styles.css'); 
         if (!response.ok) {
           throw new Error(`Failed to fetch blockly-styles.css: ${response.statusText}`);
         }
         const blocklyCSSContent = await response.text();
         zip.file(blocklyCSSPath, blocklyCSSContent);
       } catch (fetchError) {
-        console.error("Error fetching blockly-styles.css:", fetchError);
-        setError(`Could not fetch blockly-styles.css. Please ensure it's available at /blockly-styles.css. Package generated without it. ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`);
-        // Continue generating ZIP without blockly-styles.css if fetch fails, but warn user.
+        console.error("Error fetching blockly-styles.css for SCORM package:", fetchError);
+        // Add a note about this to the export message, but still proceed.
+        let currentError = error ? `${error}\n` : "";
+        currentError += `Could not fetch blockly-styles.css from /blockly-styles.css. The SCORM package will be generated without it. This file is necessary for Blockly/Scratch questions. Please ensure it is manually added to the ZIP or made available in the LMS environment. Error: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`;
+        setError(currentError);
       }
       
       const zipBlob = await zip.generateAsync({ type: 'blob' });
@@ -137,9 +139,15 @@ export const QuizDataManagement: React.FC<QuizDataManagementProps> = ({ onQuizLo
 
       setExportMessage(
         `SCORM package ZIP downloaded. IMPORTANT: You MUST manually add your library's JS bundle ` +
-        `(e.g., 'interactive-quiz-kit.esm.js' from your 'dist/lib/' or 'dist/' folder) ` +
-        `into the 'lib/' directory within the downloaded ZIP file for it to function correctly in an LMS.`
+        `(e.g., 'interactive-quiz-kit.esm.js' from your 'dist/' or 'dist/lib/' folder) ` +
+        `into the 'lib/' directory within the downloaded ZIP file for it to function correctly in an LMS.` +
+        (error && error.includes("blockly-styles.css") ? "\nAlso, remember to address the 'blockly-styles.css' issue mentioned above." : "")
       );
+      // Clear only fetch-related error if other parts succeeded
+      if (error && error.includes("blockly-styles.css") && !error.includes("Failed to generate SCORM package ZIP")) {
+        setError(null); 
+      }
+
 
     } catch (err) {
       console.error("Error generating SCORM package ZIP:", err);
@@ -148,7 +156,7 @@ export const QuizDataManagement: React.FC<QuizDataManagementProps> = ({ onQuizLo
     } finally {
       setIsLoading(false);
     }
-  }, [currentQuiz]);
+  }, [currentQuiz, error]); // Added 'error' to dependency array of useCallback because it's read inside.
   
 
   return (
@@ -180,8 +188,8 @@ export const QuizDataManagement: React.FC<QuizDataManagementProps> = ({ onQuizLo
           </div>
         )}
 
-        {error && <p className="text-sm text-red-400 mt-2 p-2 bg-red-900 bg-opacity-30 rounded">{error}</p>}
-        {exportMessage && !error && (
+        {error && <p className="text-sm text-red-400 mt-2 p-2 bg-red-900 bg-opacity-30 rounded whitespace-pre-wrap">{error}</p>}
+        {exportMessage && !error && ( // Only show export message if there's no critical error
             <p className={`text-sm mt-2 p-2 rounded ${exportMessage.includes("IMPORTANT") ? 'bg-yellow-900 bg-opacity-50 text-yellow-300' : 'text-green-400 bg-green-900 bg-opacity-30'}`}>
                 {exportMessage.split("IMPORTANT:")[0]}
                 {exportMessage.includes("IMPORTANT:") && (

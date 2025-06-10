@@ -1,19 +1,22 @@
 
-import { QuizConfig } from '../types';
+import { QuizConfig } from '../types'; // Corrected path
 
-const escapeAttribute = (unsafe: string): string => {
+const escapeAttribute = (unsafe: string | undefined): string => {
+  if (typeof unsafe !== 'string') return '';
   return unsafe.replace(/"/g, '&quot;');
 };
 
 export const generateLauncherHTML = (
   quizConfig: QuizConfig,
   libraryJSPath: string = 'lib/interactive-quiz-kit.esm.js',
-  quizDataPath: string = 'quiz_data.json',
-  blocklyCSSPath: string = 'blockly-styles.css',
+  quizDataPath: string = 'quiz_data.json', // This path is relative to the launcher in the ZIP
+  blocklyCSSPath: string = 'blockly-styles.css', // This path is relative to the launcher
   title?: string
 ): string => {
   const pageTitle = escapeAttribute(title || quizConfig.title || 'Quiz');
-  const quizConfigJsonString = JSON.stringify(quizConfig); // Embed directly for simplicity
+  
+  // Quiz data will be fetched from the relative quizDataPath
+  // The import paths for React and the library are relative to the launcher in the SCORM package
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -22,17 +25,16 @@ export const generateLauncherHTML = (
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${pageTitle}</title>
   <style>
-    body { margin: 0; font-family: sans-serif; background-color: #f0f4f8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding-top: 20px; box-sizing: border-box; }
-    #root { width: 100%; max-width: 900px; /* Adjust max-width as needed */ }
-    /* Basic loading spinner */
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; background-color: #111827; /* slate-900 */ color: #f3f4f6; /* slate-100 */ display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding-top: 20px; box-sizing: border-box; }
+    #root { width: 100%; max-width: 900px; }
     .loading-spinner {
-      border: 4px solid #f3f3f3; border-top: 4px solid #3498db;
+      border: 4px solid #4b5563; /* slate-600 */ border-top: 4px solid #3b82f6; /* blue-500 */
       border-radius: 50%; width: 40px; height: 40px;
       animation: spin 1s linear infinite;
-      position: absolute; top: 50%; left: 50%;
-      margin-left: -20px; margin-top: -20px;
+      position: absolute; top: calc(50% - 20px); left: calc(50% - 20px);
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .status-message { text-align: center; padding: 20px; margin-top: 60px; background-color: #1f2937; border: 1px solid #374151; color: #9ca3af; border-radius: 8px; }
   </style>
   <link rel="stylesheet" href="${escapeAttribute(blocklyCSSPath)}">
   <script type="importmap">
@@ -46,81 +48,81 @@ export const generateLauncherHTML = (
 </head>
 <body>
   <div id="root">
-    <div class="loading-spinner"></div>
-    <p style="text-align: center; margin-top: 80px;">Loading Quiz...</p>
+    <div class="loading-spinner" aria-label="Loading quiz content"></div>
+    <p class="status-message" role="status">Loading Quiz...</p>
   </div>
 
   <script type="module">
     import React from 'react';
     import ReactDOM from 'react-dom/client';
-    // The library will be imported from its path within the SCORM package
+    // Assuming libraryJSPath is relative to this HTML file in the SCORM package
     import { QuizPlayer } from './${escapeAttribute(libraryJSPath)}';
 
-    const quizData = ${quizConfigJsonString}; // Embed quiz data directly
+    async function loadQuizData() {
+      try {
+        const response = await fetch('./${escapeAttribute(quizDataPath)}');
+        if (!response.ok) {
+          throw new Error('Failed to load quiz data: ' + response.statusText);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error("Error loading quiz data:", error);
+        const rootEl = document.getElementById('root');
+        if (rootEl) {
+            rootEl.innerHTML = '<p class="status-message" role="alert">Error: Could not load quiz configuration. Please check package integrity.</p>';
+        }
+        return null;
+      }
+    }
+    
+    function showStatusMessage(message, isError = false) {
+        const rootEl = document.getElementById('root');
+        if (rootEl) {
+            rootEl.innerHTML = ''; // Clear previous content
+            const messageEl = document.createElement('p');
+            messageEl.textContent = message;
+            messageEl.className = 'status-message';
+            if(isError) messageEl.style.color = '#ef4444'; // red-500
+            rootEl.appendChild(messageEl);
+        }
+    }
 
-    const App = () => {
-      const handleQuizComplete = (result) => {
-        console.log("Quiz Complete (SCORM Launcher):", result);
-        // SCORMService within QuizEngine should handle LMS communication.
-        // Optionally, window.close() or a message can be shown here if allowed by LMS.
-        // LMS usually controls the window.
-        const completionMessage = document.createElement('p');
-        completionMessage.textContent = 'Quiz completed. You may close this window or the LMS will manage navigation.';
-        completionMessage.style.textAlign = 'center';
-        completionMessage.style.padding = '20px';
-        completionMessage.style.backgroundColor = '#e6fffa';
-        completionMessage.style.border = '1px solid #38b2ac';
-        completionMessage.style.color = '#234e52';
-        document.getElementById('root').innerHTML = ''; // Clear spinner/loading
-        document.getElementById('root').appendChild(completionMessage);
-      };
-
-      const handleExitQuiz = () => {
-        console.log("Quiz Exited (SCORM Launcher)");
-        // Similar to onQuizComplete, SCORMService handles termination.
-         const exitMessage = document.createElement('p');
-        exitMessage.textContent = 'Quiz exited. You may close this window or the LMS will manage navigation.';
-        exitMessage.style.textAlign = 'center';
-        exitMessage.style.padding = '20px';
-        document.getElementById('root').innerHTML = ''; // Clear spinner/loading
-        document.getElementById('root').appendChild(exitMessage);
-        // LMS might close the window or navigate away.
-      };
-      
-      // Remove loading indicator once React app takes over
-      const loadingRoot = document.getElementById('root');
-      if (loadingRoot && loadingRoot.firstChild && loadingRoot.firstChild.nodeName !== 'DIV' /* not the quiz player root */) {
-        // More robust check might be needed if QuizPlayer renders a div immediately
-        // For now, assume if it's not the spinner, it's React's content
-      } else if (loadingRoot) {
-          // If only spinner/loading text is there, clear it.
-          // This logic might need refinement based on how QuizPlayer initializes.
-          // A safer bet is to have QuizPlayer itself remove the spinner.
-          // For now, this is a simple approach.
-          // loadingRoot.innerHTML = ''; // Let React manage the root's content.
+    async function main() {
+      const quizConfigData = await loadQuizData();
+      if (!quizConfigData) {
+        return; // Error message already shown
       }
 
+      const App = () => {
+        const handleQuizComplete = (result) => {
+          console.log("Quiz Complete (SCORM Launcher):", result);
+          showStatusMessage('Quiz completed. You may close this window or the LMS will manage navigation.');
+        };
 
-      return React.createElement(QuizPlayer, {
-        quizConfig: quizData,
-        onQuizComplete: handleQuizComplete,
-        onExitQuiz: handleExitQuiz
-      });
-    };
+        const handleExitQuiz = () => {
+          console.log("Quiz Exited (SCORM Launcher)");
+          showStatusMessage('Quiz exited. You may close this window or the LMS will manage navigation.');
+        };
 
-    const rootElement = document.getElementById('root');
-    if (rootElement) {
-      // Clear loading message before rendering React app
-      const loadingSpinner = rootElement.querySelector('.loading-spinner');
-      const loadingText = rootElement.querySelector('p');
-      if (loadingSpinner) loadingSpinner.remove();
-      if (loadingText) loadingText.remove();
-      
-      const reactRoot = ReactDOM.createRoot(rootElement);
-      reactRoot.render(React.createElement(App));
-    } else {
-      console.error('Root element not found for SCORM launcher.');
+        return React.createElement(QuizPlayer, {
+          quizConfig: quizConfigData,
+          onQuizComplete: handleQuizComplete,
+          onExitQuiz: handleExitQuiz
+        });
+      };
+
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        // Clear loading message before rendering React app
+        rootElement.innerHTML = ''; 
+        const reactRoot = ReactDOM.createRoot(rootElement);
+        reactRoot.render(React.createElement(React.StrictMode, null, React.createElement(App)));
+      } else {
+        console.error('Root element not found for SCORM launcher.');
+      }
     }
+
+    main();
   </script>
 </body>
 </html>`;

@@ -1,8 +1,8 @@
 
-import { SCORMSettings } from '../types';
+import { SCORMSettings } from '../types'; // Corrected path
 
 const SCORM_TRUE = 'true';
-const SCORM_FALSE = 'false';
+// const SCORM_FALSE = 'false'; // Unused in current logic
 const SCORM_NO_ERROR = '0';
 
 // SCORM 1.2 CMI States
@@ -10,18 +10,18 @@ const CMI_CORE_LESSON_STATUS_PASSED = "passed";
 const CMI_CORE_LESSON_STATUS_FAILED = "failed";
 const CMI_CORE_LESSON_STATUS_COMPLETED = "completed";
 const CMI_CORE_LESSON_STATUS_INCOMPLETE = "incomplete";
-const CMI_CORE_LESSON_STATUS_BROWSED = "browsed";
+// const CMI_CORE_LESSON_STATUS_BROWSED = "browsed"; // Unused
 const CMI_CORE_LESSON_STATUS_NOT_ATTEMPTED = "not attempted";
 
 // SCORM 2004 CMI States
 const CMI_COMPLETION_STATUS_COMPLETED = "completed";
 const CMI_COMPLETION_STATUS_INCOMPLETE = "incomplete";
-// const CMI_COMPLETION_STATUS_NOT_ATTEMPTED = "not attempted";
-// const CMI_COMPLETION_STATUS_UNKNOWN = "unknown";
+// const CMI_COMPLETION_STATUS_NOT_ATTEMPTED = "not attempted"; // Unused
+// const CMI_COMPLETION_STATUS_UNKNOWN = "unknown"; // Unused
 
 const CMI_SUCCESS_STATUS_PASSED = "passed";
 const CMI_SUCCESS_STATUS_FAILED = "failed";
-// const CMI_SUCCESS_STATUS_UNKNOWN = "unknown";
+// const CMI_SUCCESS_STATUS_UNKNOWN = "unknown"; // Unused
 
 
 export class SCORMService {
@@ -34,7 +34,7 @@ export class SCORMService {
 
   constructor(settings: SCORMSettings) {
     this.settings = { 
-        version: "1.2",
+        version: "1.2", // Default to 1.2 if not specified
         setCompletionOnFinish: true,
         setSuccessOnPass: true,
         autoCommit: true,
@@ -58,8 +58,17 @@ export class SCORMService {
     if (win.parent && win.parent !== win) {
       return this._findAPIRecursive(win.parent);
     }
-    if (win.opener && typeof win.opener !== 'undefined' && win.opener !== win) {
-       return this._findAPIRecursive(win.opener);
+    // Check opener only if it's different from parent and self
+    if (win.opener && typeof win.opener !== 'undefined' && win.opener !== win && win.opener !== win.parent) {
+       try {
+        // Check if opener is accessible and not cross-origin restricted
+        if (win.opener.document) {
+          return this._findAPIRecursive(win.opener);
+        }
+      } catch (e) {
+        // Access to opener might be restricted
+        console.warn("SCORMService: Could not access win.opener for API search due to cross-origin restrictions.");
+      }
     }
     return null;
   }
@@ -69,8 +78,9 @@ export class SCORMService {
         this.scormAPI = this._findAPIRecursive(window);
         if (this.scormAPI) {
             if (!this.scormVersionFound) this.scormVersionFound = this.settings.version; 
+            console.log(`SCORMService: API Found. Version determined: ${this.scormVersionFound}`);
         } else {
-            console.warn("SCORMService: SCORM API not found.");
+            console.warn("SCORMService: SCORM API not found in window hierarchy.");
         }
     } catch(e) {
         console.error("SCORMService: Error finding SCORM API", e);
@@ -153,8 +163,8 @@ export class SCORMService {
     if (!this.hasAPI() || !this.isInitialized) return null;
     const value = this.scormVersionFound === "2004" ? this.scormAPI.GetValue(element) : this.scormAPI.LMSGetValue(element);
     const error = this.getLastError(); 
-    if (error.code !== SCORM_NO_ERROR) {
-      console.warn(`SCORMService: GetValue for ${element} produced an error: ${error.message}. Returning raw value:`, value);
+    if (error.code !== SCORM_NO_ERROR && error.code !== "403") { // 403 is "Data Model Element Not Initialized" - often expected for optional fields
+      console.warn(`SCORMService: GetValue for ${element} produced an error ${error.code}: ${error.message}. Returning raw value:`, value);
     }
     return value?.toString() ?? null;
   }
@@ -187,6 +197,10 @@ export class SCORMService {
         if (maxScore > minScore) { 
             const scaledScore = (rawScore - minScore) / (maxScore - minScore);
             this.setValue(scoreScaledVar, parseFloat(scaledScore.toFixed(4)));
+        } else if (maxScore === minScore && maxScore !== 0) { // handles case where maxScore = minScore (e.g. survey)
+             this.setValue(scoreScaledVar, rawScore >= maxScore ? 1 : 0);
+        } else { // maxScore is 0 or less than minScore (unusual)
+            this.setValue(scoreScaledVar, 0);
         }
     } else { 
         const scoreRawVar = this.settings.scoreRawVar_1_2 || this.settings.scoreRawVar || "cmi.core.score.raw";
@@ -220,19 +234,24 @@ export class SCORMService {
         const lessonStatusVar = this.settings.lessonStatusVar_1_2 || this.settings.lessonStatusVar || "cmi.core.lesson_status";
         let finalStatus = status;
 
-        if (status === "completed" && this.settings.setSuccessOnPass && passed !== undefined) {
-            finalStatus = passed ? CMI_CORE_LESSON_STATUS_PASSED : CMI_CORE_LESSON_STATUS_FAILED;
-        } else if (status === "passed" || status === "failed") {
-            // Already specific enough
+        // Determine final status for SCORM 1.2 based on settings and outcome
+        if (this.settings.setCompletionOnFinish) {
+            if (this.settings.setSuccessOnPass && passed !== undefined) {
+                finalStatus = passed ? CMI_CORE_LESSON_STATUS_PASSED : CMI_CORE_LESSON_STATUS_FAILED;
+            } else {
+                // If success isn't set based on pass/fail, but completion is, mark as completed
+                finalStatus = CMI_CORE_LESSON_STATUS_COMPLETED;
+            }
         } else {
-             finalStatus = CMI_CORE_LESSON_STATUS_COMPLETED; 
+            // If not setting completion on finish, maintain more granular status if applicable
+            if (status === CMI_CORE_LESSON_STATUS_PASSED || status === CMI_CORE_LESSON_STATUS_FAILED) {
+                 // Use the explicit passed/failed status
+            } else {
+                // Default to incomplete if not explicitly passed/failed and not setting completion
+                finalStatus = CMI_CORE_LESSON_STATUS_INCOMPLETE;
+            }
         }
-        
-        if (this.settings.setCompletionOnFinish || status === "passed" || status === "failed") {
-             this.setValue(lessonStatusVar, finalStatus);
-        } else if (status === CMI_CORE_LESSON_STATUS_INCOMPLETE || status === CMI_CORE_LESSON_STATUS_BROWSED) {
-            this.setValue(lessonStatusVar, status);
-        }
+        this.setValue(lessonStatusVar, finalStatus);
     }
   }
 
@@ -243,8 +262,8 @@ export class SCORMService {
     if (errorCode === SCORM_NO_ERROR || errorCode === 0 || errorCode === "0") { 
       return { code: SCORM_NO_ERROR, message: "No error." };
     }
-    const errorMessage = this.scormVersionFound === "2004" ? this.scormAPI.GetErrorString(errorCode) : this.scormAPI.LMSGetErrorString(errorCode);
-    const diagnostic = this.scormVersionFound === "2004" ? this.scormAPI.GetDiagnostic(errorCode) : this.scormAPI.LMSGetDiagnostic(errorCode);
+    const errorMessage = this.scormVersionFound === "2004" ? this.scormAPI.GetErrorString(errorCode.toString()) : this.scormAPI.LMSGetErrorString(errorCode.toString());
+    const diagnostic = this.scormVersionFound === "2004" ? this.scormAPI.GetDiagnostic(errorCode.toString()) : this.scormAPI.LMSGetDiagnostic(errorCode.toString());
     
     return {
       code: errorCode.toString(),
@@ -254,25 +273,28 @@ export class SCORMService {
   }
   
   public formatCMITime(totalSeconds: number): string {
+    const pad = (num: number, size: number = 2) => num.toString().padStart(size, '0');
     if (this.scormVersionFound === "2004") {
       // SCORM 2004 PThHmMsS format
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+      const seconds = parseFloat((totalSeconds % 60).toFixed(2)); // Allow decimals for seconds
       let timeString = "PT";
       if (hours > 0) timeString += `${hours}H`;
-      if (minutes > 0 || (hours > 0 && seconds === 0)) timeString += `${minutes}M`; // Add M if H is present and S is 0
-      if (seconds > 0 || (hours === 0 && minutes === 0)) { // Always show seconds if no H or M, or if seconds > 0
-        timeString += `${seconds.toFixed(2)}S`; // SCORM 2004 allows up to 2 decimal places for seconds
+      if (minutes > 0 || (hours > 0 && (seconds > 0 || (hours > 0 && minutes > 0)))) timeString += `${minutes}M`; 
+      if (seconds > 0 || timeString === "PT") { 
+        timeString += `${seconds}S`; 
       }
-      if (timeString === "PT") timeString = "PT0S"; // if totalSeconds is 0
-      return timeString;
+      return timeString === "PT" ? "PT0S" : timeString;
     } else {
       // SCORM 1.2 HHHH:MM:SS.SS
+      // Ensure hours are at least 2 digits, can be more if needed (up to 4 for HHHH)
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toFixed(2).padStart(5, '0')}`;
+      const seconds = parseFloat((totalSeconds % 60).toFixed(2));
+      
+      // Format for HHHH:MM:SS.SS - SCORM 1.2 allows up to 4 digits for hours
+      return `${hours.toString().padStart(2, '0')}:${pad(minutes)}:${seconds.toFixed(2).padStart(5, '0')}`;
     }
   }
 }

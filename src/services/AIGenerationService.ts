@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { QuizQuestion, QuestionTypeStrings, TrueFalseQuestion, BaseQuestion } from '../types';
-import { generateUniqueId } from '../utils/idGenerators';
+import { QuizQuestion, QuestionTypeStrings, TrueFalseQuestion, BaseQuestion } from '../types'; // Corrected path
+import { generateUniqueId } from '../utils/idGenerators'; // Corrected path
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -18,7 +18,8 @@ const trueFalseQuestionJSONStructure = `{
   "glossary": "array of strings (optional, e.g., [\\"Rayleigh scattering\\", \\"Atmosphere\\"])",
   "bloomLevel": "string (optional, e.g., \\"Remembering\\")",
   "gradeBand": "string (optional, e.g., \\"Grades 6-8\\")",
-  "contextCode": "string (optional, e.g., \\"SCI.PHYS.OPT.001\\")"
+  "contextCode": "string (optional, e.g., \\"SCI.PHYS.OPT.001\\")",
+  "course": "string (optional, e.g., \\"Physics 101\\")"
 }`;
 // Add more structures here for other question types in the future
 
@@ -53,7 +54,7 @@ Constraints and Guidelines:
 - 'bloomLevel': (Optional) The cognitive level according to Bloom's Taxonomy (e.g., 'Remembering', 'Understanding', 'Applying').
 - 'gradeBand': (Optional) Target grade level (e.g., 'Grades 3-5', 'High School').
 - 'contextCode': (Optional) An internal or standard-based code for the question.
-
+- 'course': (Optional) An associated course for the question.
 
 Ensure the generated question is factually accurate and appropriate for the given topic and difficulty.
 `;
@@ -103,7 +104,7 @@ Return ONLY the JSON object.`;
           difficulty: ['easy', 'medium', 'hard'].includes(generatedData.difficulty) ? generatedData.difficulty : 'medium',
           contextCode: typeof generatedData.contextCode === 'string' ? generatedData.contextCode : undefined,
           gradeBand: typeof generatedData.gradeBand === 'string' ? generatedData.gradeBand : undefined,
-          course: typeof generatedData.course === 'string' ? generatedData.course : undefined, // Added course
+          course: typeof generatedData.course === 'string' ? generatedData.course : undefined,
           category: typeof generatedData.category === 'string' ? generatedData.category : undefined,
           topic: typeof generatedData.topic === 'string' ? generatedData.topic : (topic || undefined), 
         };

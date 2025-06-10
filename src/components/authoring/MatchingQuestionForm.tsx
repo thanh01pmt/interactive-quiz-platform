@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { MatchingQuestion, MatchPromptItem, MatchOptionItem, BaseQuestion } from '../../types';
+import { MatchingQuestion, MatchPromptItem, MatchOptionItem, BaseQuestion } from '../../types'; // Corrected path
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
-import { Button } from '../shared/Button';
-import { generateUniqueId } from '../../utils/idGenerators';
+import { Button } from '../shared/Button'; // Corrected path
+import { generateUniqueId } from '../../utils/idGenerators'; // Corrected path
 
 interface MatchingQuestionFormProps {
   question: MatchingQuestion;
@@ -115,7 +115,7 @@ export const MatchingQuestionForm: React.FC<MatchingQuestionFormProps> = ({
               placeholder={`Prompt ${index + 1}`} required
               className="flex-grow p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 text-sm focus:ring-sky-500 focus:border-sky-500"
             />
-            {prompts.length > 1 && <Button type="button" onClick={() => handleRemovePrompt(index)} variant="danger" size="sm" className="!p-1.5">X</Button>}
+            {prompts.length > 1 && <Button type="button" onClick={() => handleRemovePrompt(index)} variant="danger" size="sm" className="!p-1.5" aria-label={`Remove prompt ${index + 1}`}>X</Button>}
           </div>
         ))}
         <Button type="button" onClick={handleAddPrompt} variant="secondary" size="sm">Add Prompt</Button>
@@ -131,7 +131,7 @@ export const MatchingQuestionForm: React.FC<MatchingQuestionFormProps> = ({
               placeholder={`Option ${index + 1}`} required
               className="flex-grow p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 text-sm focus:ring-sky-500 focus:border-sky-500"
             />
-            {options.length > 1 && <Button type="button" onClick={() => handleRemoveOption(index)} variant="danger" size="sm" className="!p-1.5">X</Button>}
+            {options.length > 1 && <Button type="button" onClick={() => handleRemoveOption(index)} variant="danger" size="sm" className="!p-1.5" aria-label={`Remove option ${index + 1}`}>X</Button>}
           </div>
         ))}
         <Button type="button" onClick={handleAddOption} variant="secondary" size="sm">Add Option</Button>
@@ -148,6 +148,7 @@ export const MatchingQuestionForm: React.FC<MatchingQuestionFormProps> = ({
                 value={correctAnswerMap.find(m => m.promptId === prompt.id)?.optionId || ""}
                 onChange={(e) => handleMapChange(prompt.id, e.target.value)}
                 className="p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 text-sm focus:ring-sky-500 focus:border-sky-500"
+                aria-label={`Select matching option for ${prompt.content}`}
               >
                 <option value="">Select Matching Option</option>
                 {options.map(opt => (

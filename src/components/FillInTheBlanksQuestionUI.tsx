@@ -50,7 +50,7 @@ export const FillInTheBlanksQuestionUI: React.FC<FillInTheBlanksQuestionUIProps>
         if (segment.type === 'blank' && segment.id) {
           const blankId = segment.id;
           const correctAnswerData = question.answers.find(a => a.blankId === blankId);
-          const isCorrect = showCorrectAnswer && correctAnswerData && correctAnswerData.acceptedValues.map(v => v.toLowerCase()).includes(blankAnswers[blankId]?.toLowerCase() || '');
+          const isCorrect = showCorrectAnswer && correctAnswerData && correctAnswerData.acceptedValues.map(v => question.isCaseSensitive ? v : v.toLowerCase()).includes(question.isCaseSensitive ? (blankAnswers[blankId] || '') : (blankAnswers[blankId]?.toLowerCase() || ''));
           let borderColor = 'border-slate-600 focus:border-sky-500';
           if (showCorrectAnswer) {
             borderColor = isCorrect ? 'border-green-500' : 'border-red-500';
@@ -65,6 +65,7 @@ export const FillInTheBlanksQuestionUI: React.FC<FillInTheBlanksQuestionUIProps>
               className={`inline-block mx-1 px-2 py-1 w-32 border-b-2 bg-transparent ${borderColor} focus:outline-none text-sky-300 placeholder-slate-500`}
               placeholder="Type here"
               disabled={showCorrectAnswer}
+              aria-label={`Blank field ${index + 1}`}
             />
           );
         }

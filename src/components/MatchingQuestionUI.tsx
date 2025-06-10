@@ -31,7 +31,7 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
     }
     return assignments;
   }, [userAnswer, question.prompts]);
-  
+
   const [promptAssignments, setPromptAssignments] = useState<Record<string, string | null>>(initialAssignments);
   const [draggedOption, setDraggedOption] = useState<MatchOptionItem | null>(null);
 
@@ -58,7 +58,7 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
     if (showCorrectAnswer) return;
     e.currentTarget.classList.add('bg-sky-800'); // Highlight drop target
   };
-  
+
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.currentTarget.classList.remove('bg-sky-800');
   };
@@ -69,7 +69,7 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
     if (showCorrectAnswer || !draggedOption) return;
 
     const newAssignments = { ...promptAssignments };
-    
+
     // If this prompt already had an item, that item becomes available again (handled by availableOptions memo)
     // If the dragged item was previously assigned to another prompt, unassign it from there
     Object.keys(newAssignments).forEach(pId => {
@@ -104,12 +104,12 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
   return (
     <div className="flex flex-col md:flex-row gap-6">
       {/* Prompts (Drop Zones) */}
-      <div className="w-full md:w-1/2 space-y-3">
-        <h3 className="text-lg font-semibold text-sky-400">Match Prompts To:</h3>
+      <div className="w-full md:w-1/2 space-y-3" aria-label="Matching prompts area">
+        <h3 className="text-lg font-semibold text-sky-400" id="matching-prompts-title">Match Prompts To:</h3>
         {question.prompts.map(prompt => {
           const assignedOptionId = promptAssignments[prompt.id];
           const assignedOption = assignedOptionId ? question.options.find(opt => opt.id === assignedOptionId) : null;
-          
+
           let borderColor = 'border-slate-600';
           let promptBg = 'bg-slate-700';
           let isCorrectMatch = false;
@@ -130,15 +130,19 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, prompt.id)}
               className={`p-3 border-2 border-dashed ${borderColor} ${promptBg} rounded-md min-h-[60px] flex items-center justify-between transition-colors`}
+              tabIndex={0}
+              role="group"
+              aria-labelledby={`prompt-text-${prompt.id}`}
+              aria-describedby={assignedOption ? `assigned-option-${prompt.id}` : `empty-drop-target-${prompt.id}`}
             >
-              <span className="text-slate-200">{prompt.content}</span>
+              <span id={`prompt-text-${prompt.id}`} className="text-slate-200">{prompt.content}</span>
               {assignedOption && (
-                <div className={`ml-2 p-2 rounded text-sm ${showCorrectAnswer && isCorrectMatch ? 'bg-green-600' : (showCorrectAnswer && !isCorrectMatch ? 'bg-red-600' : 'bg-sky-600')}`}>
+                <div id={`assigned-option-${prompt.id}`} className={`ml-2 p-2 rounded text-sm ${showCorrectAnswer && isCorrectMatch ? 'bg-green-600' : (showCorrectAnswer && !isCorrectMatch ? 'bg-red-600' : 'bg-sky-600')}`}>
                   {assignedOption.content}
                   {!showCorrectAnswer && (
-                    <button 
-                      onClick={() => handleRemoveMatch(prompt.id)} 
-                      className="ml-2 text-xs text-red-300 hover:text-red-200" 
+                    <button
+                      onClick={() => handleRemoveMatch(prompt.id)}
+                      className="ml-2 text-xs text-red-300 hover:text-red-200"
                       aria-label={`Remove match for ${prompt.content}`}
                     >
                       (X)
@@ -146,8 +150,8 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
                   )}
                 </div>
               )}
-              {!assignedOption && !showCorrectAnswer && <span className="text-xs text-slate-500 italic">Drop option here</span>}
-              {!assignedOption && showCorrectAnswer && 
+              {!assignedOption && !showCorrectAnswer && <span id={`empty-drop-target-${prompt.id}`} className="text-xs text-slate-500 italic">Drop option here</span>}
+              {!assignedOption && showCorrectAnswer &&
                 <span className="text-xs text-yellow-400 italic">
                   Correct: {question.options.find(o => question.correctAnswerMap.find(m => m.promptId === prompt.id)?.optionId === o.id)?.content || 'N/A'}
                 </span>
@@ -158,8 +162,8 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
       </div>
 
       {/* Options (Draggable Items) */}
-      <div className="w-full md:w-1/2 p-3 bg-slate-800 rounded-lg space-y-2">
-        <h3 className="text-lg font-semibold text-sky-400">Available Options:</h3>
+      <div className="w-full md:w-1/2 p-3 bg-slate-800 rounded-lg space-y-2" aria-label="Available options to match">
+        <h3 className="text-lg font-semibold text-sky-400" id="matching-options-title">Available Options:</h3>
         {availableOptions.length > 0 ? availableOptions.map(option => (
           <div
             key={option.id}
@@ -167,11 +171,14 @@ export const MatchingQuestionUI: React.FC<MatchingQuestionUIProps> = ({
             onDragStart={() => handleDragStart(option)}
             onDragEnd={() => setDraggedOption(null)}
             className={`p-2.5 bg-slate-600 rounded shadow ${!showCorrectAnswer ? 'cursor-grab active:cursor-grabbing hover:bg-slate-500' : 'opacity-70'} ${draggedOption?.id === option.id ? 'opacity-50 ring-2 ring-sky-500' : ''}`}
+            tabIndex={showCorrectAnswer ? -1 : 0}
+            aria-grabbed={draggedOption?.id === option.id}
+            role="listitem"
           >
             {option.content}
           </div>
         )) : <p className="text-slate-400 italic">All options placed.</p>}
-         {showCorrectAnswer && availableOptions.length > 0 && 
+         {showCorrectAnswer && availableOptions.length > 0 &&
             <p className="text-xs text-slate-500 mt-2"> (These items were not matched or incorrectly matched) </p>
          }
       </div>

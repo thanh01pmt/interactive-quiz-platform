@@ -154,7 +154,7 @@ export const sampleQuiz: QuizConfig = {
     shuffleQuestions: false,
     showCorrectAnswers: "end_of_quiz",
     passingScorePercent: 70,
-    shuffleOptions: true, 
+    shuffleOptions: true,
     webhookUrl: "https://webhook.site/#!/b7ebf9c8-272e-4e42-9993-90875e672721", // Replace with your test URL
     scorm: { // SCORM Settings for testing
       version: "1.2",
@@ -293,7 +293,7 @@ export const sampleQuiz: QuizConfig = {
       prompt: "What is the approximate value of Pi (to 2 decimal places)? Enter the value.",
       points: 5,
       answer: 3.14,
-      tolerance: 0.005, 
+      tolerance: 0.005,
       explanation: "Pi (π) is approximately 3.14. A small tolerance is allowed for this answer.",
       category: "Mathematics",
       topic: "Constants",
@@ -343,7 +343,7 @@ export const sampleQuiz: QuizConfig = {
       questionType: "hotspot",
       prompt: "Click on the continent of Africa on the map.",
       points: 10,
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1280px-World_map_-_low_resolution.svg.png", 
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1280px-World_map_-_low_resolution.svg.png",
       imageAltText: "A world map showing continents.",
       hotspots: [
         { id: "africa_hs", shape: "rect", coords: [45, 40, 15, 30], description: "Africa" },
@@ -358,7 +358,7 @@ export const sampleQuiz: QuizConfig = {
     },
     {
       id: "q12_blockly",
-      questionType: "blockly_programming", 
+      questionType: "blockly_programming",
       prompt: "Using the Blockly blocks, create a program that prints 'Hello World' to the console (conceptually).",
       points: 20,
       toolboxDefinition: basicToolboxXml,
@@ -378,7 +378,7 @@ export const sampleQuiz: QuizConfig = {
       questionType: "scratch_programming",
       prompt: "Using Scratch-style blocks, make the character say 'Hello World' when the green flag is clicked.",
       points: 20,
-      toolboxDefinition: scratchToolboxXml, 
+      toolboxDefinition: scratchToolboxXml,
       initialWorkspace: scratchInitialWorkspaceXml,
       solutionWorkspaceXML: scratchSolutionHelloWorldXml,
       explanation: "The solution uses an 'event_whenflagclicked' block followed by a 'looks_say' block with 'Hello World'.",

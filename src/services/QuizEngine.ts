@@ -8,9 +8,9 @@ import {
   QuizEngineConstructorOptions, QuizEngineCallbacks,
   PerformanceByLearningObjective, PerformanceByCategory, PerformanceByTopic,
   PerformanceByDifficulty, PerformanceByBloomLevel,
-  PerformanceMetric 
-} from '../types';
-import { SCORMService } from './SCORMService'; 
+  PerformanceMetric
+} from '../types'; // Corrected path
+import { SCORMService } from './SCORMService'; // Path is correct if both are in src/services
 
 interface AggregatedPerformanceData {
   totalQuestions: number;
@@ -43,7 +43,7 @@ export class QuizEngine {
       ? [...this.config.questions].sort(() => Math.random() - 0.5)
       : this.config.questions;
 
-    this.overallStartTime = Date.now(); 
+    this.overallStartTime = Date.now();
 
     if (this.config.settings?.timeLimitMinutes && this.config.settings.timeLimitMinutes > 0) {
       this.timeLeftInSeconds = this.config.settings.timeLimitMinutes * 60;
@@ -69,7 +69,7 @@ export class QuizEngine {
 
     const initialQ = this.getCurrentQuestion();
     if (initialQ) {
-        this.questionStartTime = Date.now(); 
+        this.questionStartTime = Date.now();
     }
 
     if (this.callbacks.onQuizStart) {
@@ -92,7 +92,7 @@ export class QuizEngine {
       const currentTotalTime = this.questionTimings.get(currentQId) || 0;
       this.questionTimings.set(currentQId, currentTotalTime + (elapsedMs / 1000));
     }
-    this.questionStartTime = null; 
+    this.questionStartTime = null;
   }
 
 
@@ -159,7 +159,7 @@ export class QuizEngine {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex++;
       const currentQ = this.getCurrentQuestion();
-      this.questionStartTime = Date.now(); 
+      this.questionStartTime = Date.now();
       this.callbacks.onQuestionChange?.(currentQ, this.getCurrentQuestionNumber(), this.getTotalQuestions());
       return currentQ;
     }
@@ -171,7 +171,7 @@ export class QuizEngine {
     if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
       const currentQ = this.getCurrentQuestion();
-      this.questionStartTime = Date.now(); 
+      this.questionStartTime = Date.now();
       this.callbacks.onQuestionChange?.(currentQ, this.getCurrentQuestionNumber(), this.getTotalQuestions());
       return currentQ;
     }
@@ -183,11 +183,11 @@ export class QuizEngine {
       this._recordCurrentQuestionTime();
       this.currentQuestionIndex = index;
       const currentQ = this.getCurrentQuestion();
-      this.questionStartTime = Date.now(); 
+      this.questionStartTime = Date.now();
       this.callbacks.onQuestionChange?.(currentQ, this.getCurrentQuestionNumber(), this.getTotalQuestions());
       return currentQ;
     }
-    return this.getCurrentQuestion(); 
+    return this.getCurrentQuestion();
   }
 
   public isQuizFinished(): boolean {
@@ -295,9 +295,9 @@ export class QuizEngine {
       updateMap(bloomLevelPerformanceMap, q.bloomLevel, points, isCorrect);
     });
 
-    const formatPerformanceArray = <T extends PerformanceMetric & Record<string, any>>( // Adjusted T to be more generic
+    const formatPerformanceArray = <T extends PerformanceMetric & Record<string, any>>(
         map: Map<string, AggregatedPerformanceData>,
-        keyName: keyof T // This ensures keyName is a valid key of T
+        keyName: keyof T
     ): T[] => {
         return Array.from(map.entries()).map(([key, data]) => ({
             [keyName]: key,
@@ -306,7 +306,7 @@ export class QuizEngine {
             pointsEarned: data.pointsEarned,
             maxPoints: data.maxPoints,
             percentage: data.maxPoints > 0 ? parseFloat(((data.pointsEarned / data.maxPoints) * 100).toFixed(2)) : 0,
-        } as T)); // Cast to T, assuming T's structure aligns
+        } as T));
     };
 
 
@@ -429,7 +429,8 @@ export class QuizEngine {
           isCorrect = fitbq.answers.every(correctAns => {
             const userVal = userAnswerMap[correctAns.blankId]?.trim();
             const acceptedVals = correctAns.acceptedValues.map(v => v.trim());
-            return fitbq.isCaseSensitive ? acceptedVals.some(accVal => accVal === userVal) : acceptedVals.some(accVal => accVal.toLowerCase() === userVal?.toLowerCase());
+            const caseSensitive = fitbq.isCaseSensitive === undefined ? false : fitbq.isCaseSensitive;
+            return caseSensitive ? acceptedVals.some(accVal => accVal === userVal) : acceptedVals.some(accVal => accVal.toLowerCase() === userVal?.toLowerCase());
           });
         }
         break;
@@ -455,7 +456,8 @@ export class QuizEngine {
         correctAnswer = saq.acceptedAnswers;
         if (typeof answer === 'string') {
           const userAnswerTrimmed = answer.trim();
-          isCorrect = saq.acceptedAnswers.some(accAns => saq.isCaseSensitive ? accAns.trim() === userAnswerTrimmed : accAns.trim().toLowerCase() === userAnswerTrimmed.toLowerCase());
+          const caseSensitive = saq.isCaseSensitive === undefined ? false : saq.isCaseSensitive;
+          isCorrect = saq.acceptedAnswers.some(accAns => caseSensitive ? accAns.trim() === userAnswerTrimmed : accAns.trim().toLowerCase() === userAnswerTrimmed.toLowerCase());
         }
         break;
       case 'numeric':
@@ -509,12 +511,12 @@ export class QuizEngine {
   }
 
   public getElapsedTime(): number {
-    return Date.now() - this.overallStartTime; 
+    return Date.now() - this.overallStartTime;
   }
 
   public destroy(): void {
     this.stopTimer();
-    this._recordCurrentQuestionTime(); 
+    this._recordCurrentQuestionTime();
 
     if (this.scormService && this.scormService.hasAPI()) {
       if (this.quizResultState.scormStatus === 'initialized' || this.quizResultState.scormStatus === 'committed' || this.quizResultState.scormStatus === 'sending_data') {
@@ -528,6 +530,6 @@ export class QuizEngine {
       }
     }
     this.scormService = null;
-    console.log("QuizEngine destroyed. Question timings:", this.questionTimings);
+    console.log("QuizEngine destroyed. Question timings:", Object.fromEntries(this.questionTimings));
   }
 }

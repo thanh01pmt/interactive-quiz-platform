@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { QuizQuestion, QuestionTypeStrings } from '../../types';
-import { Button } from '../shared/Button';
+import { QuizQuestion, QuestionTypeStrings } from '../../types'; // Corrected path
+import { Button } from '../shared/Button'; // Corrected path
 
 interface QuestionListProps {
   questions: QuizQuestion[];
@@ -9,7 +9,7 @@ interface QuestionListProps {
   onEditQuestion: (question: QuizQuestion, index: number) => void;
   onDeleteQuestion: (index: number) => void;
   onOrderChange: (newOrderedQuestions: QuizQuestion[]) => void;
-  onOpenAIGenerator: () => void;
+  onOpenAIGenerator: () => void; 
 }
 
 const questionTypeOptions: { value: QuestionTypeStrings; label: string }[] = [
@@ -33,7 +33,7 @@ export const QuestionList: React.FC<QuestionListProps> = ({
   onEditQuestion,
   onDeleteQuestion,
   onOpenAIGenerator,
-  onOrderChange,
+  onOrderChange, 
 }) => {
   const [selectedNewQuestionType, setSelectedNewQuestionType] = useState<QuestionTypeStrings>('multiple_choice');
 
@@ -94,17 +94,19 @@ export const QuestionList: React.FC<QuestionListProps> = ({
       ) : (
         <ul className="space-y-3">
           {questions.map((q, index) => (
-            <li
-              key={q.id || `q-${index}`}
+            <li 
+              key={q.id || `q-${index}`} 
               className="p-4 bg-slate-700 rounded-md shadow flex justify-between items-center cursor-grab active:cursor-grabbing"
               draggable
               onDragStart={() => handleDragStart(index)}
               onDragEnter={() => handleDragEnter(index)}
               onDragEnd={handleDragEnd}
               onDragOver={(e) => e.preventDefault()} // Important for drop to work
+              tabIndex={0}
+              aria-label={`Question ${index + 1}: ${q.prompt.substring(0,50)}. Type: ${questionTypeOptions.find(opt => opt.value === q.questionType)?.label || q.questionType}. Press space to edit or delete.`}
             >
               <div className="flex items-center space-x-2">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 <div>
@@ -115,8 +117,8 @@ export const QuestionList: React.FC<QuestionListProps> = ({
                 </div>
               </div>
               <div className="space-x-2 flex-shrink-0">
-                <Button onClick={() => onEditQuestion(q, index)} size="sm" variant="ghost">Edit</Button>
-                <Button onClick={() => onDeleteQuestion(index)} size="sm" variant="danger">Delete</Button>
+                <Button onClick={() => onEditQuestion(q, index)} size="sm" variant="ghost" aria-label={`Edit question ${index + 1}`}>Edit</Button>
+                <Button onClick={() => onDeleteQuestion(index)} size="sm" variant="danger" aria-label={`Delete question ${index + 1}`}>Delete</Button>
               </div>
             </li>
           ))}

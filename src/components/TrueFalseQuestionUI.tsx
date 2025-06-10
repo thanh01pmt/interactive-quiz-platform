@@ -1,44 +1,39 @@
 
 import React from 'react';
-import { MultipleChoiceQuestion, UserAnswerType } from '../types';
+import { TrueFalseQuestion, UserAnswerType } from '../types';
 
-interface MultipleChoiceQuestionUIProps {
-  question: MultipleChoiceQuestion;
+interface TrueFalseQuestionUIProps {
+  question: TrueFalseQuestion;
   onAnswerChange: (answer: UserAnswerType) => void;
   userAnswer: UserAnswerType | null;
   showCorrectAnswer?: boolean;
-  shuffleOptions?: boolean; // Added shuffleOptions prop
 }
 
-export const MultipleChoiceQuestionUI: React.FC<MultipleChoiceQuestionUIProps> = ({
+export const TrueFalseQuestionUI: React.FC<TrueFalseQuestionUIProps> = ({
   question,
   onAnswerChange,
   userAnswer,
   showCorrectAnswer,
-  shuffleOptions, // Use passed shuffleOptions
 }) => {
-  const options = React.useMemo(() => {
-    // Use the passed shuffleOptions prop
-    if (question.options && question.options.length > 0 && shuffleOptions) {
-        return [...question.options].sort(() => Math.random() - 0.5);
-    }
-    return question.options;
-  }, [question.options, shuffleOptions]); // Dependency updated
+  const options = [
+    { id: 'true', text: 'True' },
+    { id: 'false', text: 'False' },
+  ];
 
-
-  const handleChange = (optionId: string) => {
-    onAnswerChange(optionId);
+  const handleChange = (value: string) => {
+    onAnswerChange(value); // 'true' or 'false'
   };
 
   return (
     <div className="space-y-3">
       {options.map((option) => {
         const isSelected = userAnswer === option.id;
-        const isCorrect = option.id === question.correctAnswerId;
+        const isCorrectChoice = (option.id === 'true' && question.correctAnswer === true) || (option.id === 'false' && question.correctAnswer === false);
         let bgColor = 'bg-slate-700 hover:bg-slate-600';
+
         if (showCorrectAnswer) {
-          if (isCorrect) bgColor = 'bg-green-600';
-          else if (isSelected) bgColor = 'bg-red-600';
+          if (isCorrectChoice) bgColor = 'bg-green-600';
+          else if (isSelected && !isCorrectChoice) bgColor = 'bg-red-600';
         } else if (isSelected) {
           bgColor = 'bg-sky-700';
         }
@@ -54,8 +49,9 @@ export const MultipleChoiceQuestionUI: React.FC<MultipleChoiceQuestionUIProps> =
               value={option.id}
               checked={isSelected}
               onChange={() => handleChange(option.id)}
-              className="sr-only" // Hide actual radio, style label
+              className="sr-only"
               disabled={showCorrectAnswer}
+              aria-label={option.text}
             />
             <span className="text-slate-100">{option.text}</span>
           </label>

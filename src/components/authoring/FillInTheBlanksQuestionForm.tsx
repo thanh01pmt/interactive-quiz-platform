@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { FillInTheBlanksQuestion, BaseQuestion } from '../../types';
+import { FillInTheBlanksQuestion, BaseQuestion } from '../../types'; // Corrected path
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
-import { Button } from '../shared/Button';
-import { generateUniqueId } from '../../utils/idGenerators';
+import { Button } from '../shared/Button'; // Corrected path
+import { generateUniqueId } from '../../utils/idGenerators'; // Corrected path
 
 interface FillInTheBlanksQuestionFormProps {
   question: FillInTheBlanksQuestion;
@@ -31,31 +31,30 @@ export const FillInTheBlanksQuestionForm: React.FC<FillInTheBlanksQuestionFormPr
   const handleSegmentChange = (index: number, field: 'type' | 'content', value: string) => {
     const newSegments = [...segments];
     const segmentToUpdate = { ...newSegments[index] };
+    let newAnswers = [...answers]; // Operate on a copy
     
     if (field === 'type') {
       const newType = value as 'text' | 'blank';
       if (segmentToUpdate.type === 'text' && newType === 'blank') {
         const newBlankId = segmentToUpdate.id || generateUniqueId('fitb_blank_');
         newSegments[index] = { type: 'blank' as const, id: newBlankId };
-        if (!answers.find(a => a.blankId === newBlankId)) {
-            setAnswers(prevAns => [...prevAns, { blankId: newBlankId, acceptedValues: [''] }]);
+        if (!newAnswers.find(a => a.blankId === newBlankId)) {
+            newAnswers.push({ blankId: newBlankId, acceptedValues: [''] });
         }
       } else if (segmentToUpdate.type === 'blank' && newType === 'text') {
          const blankIdToRemove = segmentToUpdate.id;
          newSegments[index] = { type: 'text' as const, content: '' };
          if (blankIdToRemove) {
-            setAnswers(prevAns => prevAns.filter(ans => ans.blankId !== blankIdToRemove));
+            newAnswers = newAnswers.filter(ans => ans.blankId !== blankIdToRemove);
          }
-      } else if (segmentToUpdate.type === newType) {
-        // Type hasn't changed, do nothing specific here, content is handled below or not applicable
-      }
+      } // No action if type is unchanged or invalid change
     } else if (field === 'content' && newSegments[index].type === 'text') {
       (newSegments[index] as { type: 'text', content?: string }).content = value;
     }
     
     setSegments(newSegments);
-    const currentValidAnswers = answers.filter(ans => newSegments.some(seg => seg.type === 'blank' && seg.id === ans.blankId));
-    onQuestionChange({ ...question, segments: newSegments, answers: currentValidAnswers });
+    setAnswers(newAnswers); // Set the potentially updated answers
+    onQuestionChange({ ...question, segments: newSegments, answers: newAnswers, isCaseSensitive });
   };
 
   const handleAddSegment = () => {
@@ -73,20 +72,20 @@ export const FillInTheBlanksQuestionForm: React.FC<FillInTheBlanksQuestionFormPr
     const newSegments = segments.filter((_, i) => i !== index);
     setSegments(newSegments);
     
-    let newAnswers = answers;
+    let newAnswersArray = answers;
     if (segmentToRemove.type === 'blank' && segmentToRemove.id) {
-        newAnswers = answers.filter(ans => ans.blankId !== segmentToRemove.id);
-        setAnswers(newAnswers);
+        newAnswersArray = answers.filter(ans => ans.blankId !== segmentToRemove.id);
+        setAnswers(newAnswersArray);
     }
-    onQuestionChange({ ...question, segments: newSegments, answers: newAnswers });
+    onQuestionChange({ ...question, segments: newSegments, answers: newAnswersArray });
   };
 
   const handleAnswerChange = (blankId: string, value: string) => {
-    const newAnswers = answers.map(ans => 
+    const newAnswersArray = answers.map(ans => 
       ans.blankId === blankId ? { ...ans, acceptedValues: value.split(',').map(s => s.trim()).filter(Boolean) } : ans
     );
-    setAnswers(newAnswers);
-    onQuestionChange({ ...question, answers: newAnswers });
+    setAnswers(newAnswersArray);
+    onQuestionChange({ ...question, answers: newAnswersArray });
   };
 
   const handleCaseSensitiveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,7 +122,7 @@ export const FillInTheBlanksQuestionForm: React.FC<FillInTheBlanksQuestionFormPr
               </div>
             )}
              {segments.length > 1 && (
-              <Button type="button" onClick={() => handleRemoveSegment(index)} variant="danger" size="sm" className="!p-1.5">
+              <Button type="button" onClick={() => handleRemoveSegment(index)} variant="danger" size="sm" className="!p-1.5" aria-label={`Remove segment ${index + 1}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </Button>
             )}
@@ -166,8 +165,8 @@ export const FillInTheBlanksQuestionForm: React.FC<FillInTheBlanksQuestionFormPr
        {segments.filter(s => s.type === 'blank').length === 0 && (
          <p className="text-xs text-yellow-400">Add at least one 'blank' segment to define answers.</p>
        )}
-       {segments.filter(s => s.type === 'blank').length > 0 && answers.some(a => a.acceptedValues.length === 0) && (
-         <p className="text-xs text-yellow-400">Ensure all blanks have at least one accepted answer.</p>
+       {segments.filter(s => s.type === 'blank').length > 0 && answers.some(a => a.acceptedValues.length === 0 || a.acceptedValues.every(val => val.trim() === '')) && (
+         <p className="text-xs text-yellow-400">Ensure all blanks have at least one non-empty accepted answer.</p>
        )}
     </div>
   );

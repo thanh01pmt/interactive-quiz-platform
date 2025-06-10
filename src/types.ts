@@ -181,19 +181,21 @@ export interface SCORMSettings {
   autoCommit?: boolean;
 
   studentNameVar?: string;
-  lessonStatusVar?: string;
-  scoreRawVar?: string;
-  scoreMaxVar?: string;
-  scoreMinVar?: string;
-  sessionTimeVar?: string;
+  lessonStatusVar?: string; // Generic, can be overridden by version-specific
+  scoreRawVar?: string;     // Generic
+  scoreMaxVar?: string;     // Generic
+  scoreMinVar?: string;     // Generic
+  sessionTimeVar?: string;  // Generic
   exitVar?: string;
   suspendDataVar?: string;
 
+  // SCORM 1.2 specific (will default to these if 'lessonStatusVar' etc. are not set and version is 1.2)
   lessonStatusVar_1_2?: string;
   scoreRawVar_1_2?: string;
   scoreMaxVar_1_2?: string;
   scoreMinVar_1_2?: string;
 
+  // SCORM 2004 specific (will default to these if 'lessonStatusVar' etc. are not set and version is 2004)
   completionStatusVar_2004?: string;
   successStatusVar_2004?: string;
   scoreScaledVar_2004?: string;
@@ -265,10 +267,11 @@ export interface QuizResult {
   webhookError?: string;
   scormStatus?: 'idle' | 'no_api' | 'initializing' | 'initialized' | 'sending_data' | 'committed' | 'terminated' | 'error';
   scormError?: string;
-  studentName?: string;
+  studentName?: string; // Populated from SCORM
   totalTimeSpentSeconds?: number;
   averageTimePerQuestionSeconds?: number;
 
+  // Performance analytics
   performanceByLearningObjective?: PerformanceByLearningObjective[];
   performanceByCategory?: PerformanceByCategory[];
   performanceByTopic?: PerformanceByTopic[];
@@ -276,22 +279,24 @@ export interface QuizResult {
   performanceByBloomLevel?: PerformanceByBloomLevel[];
 }
 
+// Callbacks for QuizEngine events
 export interface QuizEngineCallbacks {
   onQuizStart?: (initialData: {
     initialQuestion: QuizQuestion | null;
     currentQuestionNumber: number;
     totalQuestions: number;
     timeLimitInSeconds: number | null;
-    scormStatus?: QuizResult['scormStatus'];
-    studentName?: string;
+    scormStatus?: QuizResult['scormStatus']; // Added SCORM status
+    studentName?: string; // Added student name
   }) => void;
   onQuestionChange?: (question: QuizQuestion | null, currentQuestionNumber: number, totalQuestions: number) => void;
-  onAnswerSubmit?: (question: QuizQuestion, userAnswer: UserAnswerType) => void;
+  onAnswerSubmit?: (question: QuizQuestion, userAnswer: UserAnswerType) => void; // Changed questionId to question
   onQuizFinish?: (results: QuizResult) => void;
   onTimeTick?: (timeLeftInSeconds: number) => void;
   onQuizTimeUp?: () => void;
 }
 
+// Options for QuizEngine constructor
 export interface QuizEngineConstructorOptions {
   config: QuizConfig;
   callbacks?: QuizEngineCallbacks;

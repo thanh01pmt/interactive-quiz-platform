@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { QuizConfig, QuizQuestion as QuizQuestionType, UserAnswerType, QuizResult as QuizResultType, QuizEngineCallbacks } from '../types';
-import { QuizEngine } from '../services/QuizEngine';
+import { QuizConfig, QuizQuestion as QuizQuestionType, UserAnswerType, QuizResult as QuizResultType, QuizEngineCallbacks } from '../types'; // Corrected
+import { QuizEngine } from '../services/QuizEngine'; // Corrected
 import { QuestionRenderer } from './QuestionRenderer';
 import { QuizResult } from './QuizResult';
 import { Button } from './shared/Button';
@@ -27,10 +27,8 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
 
   const handleFinishQuiz = useCallback(async () => {
     if (engineRef.current) {
-      const results = await engineRef.current.calculateResults(); 
-      // QuizEngine's onQuizFinish callback should update quizResults state already.
-      // This explicit set is a fallback or ensures the latest state if onQuizFinish isn't perfectly synced.
-      setQuizResults(results); 
+      const results = await engineRef.current.calculateResults();
+      setQuizResults(results);
       setShowResults(true);
       onQuizComplete(results);
     }
@@ -47,9 +45,8 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
         setCurrentQuestion(initialData.initialQuestion);
         setUserAnswer(null);
         setTimeLeft(initialData.timeLimitInSeconds);
-        setStudentNameFromLMS(initialData.studentName); // Store student name
+        setStudentNameFromLMS(initialData.studentName);
         if(initialData.scormStatus && initialData.scormStatus !== 'idle'){
-            // Potentially update a global SCORM status indicator here if needed
             console.log("Initial SCORM Status:", initialData.scormStatus, "Student:", initialData.studentName);
         }
       },
@@ -67,8 +64,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
       },
       onQuizFinish: (resultsWithAllStatus) => {
         console.log("Quiz Finished (via callback with all statuses)", resultsWithAllStatus);
-        setQuizResults(resultsWithAllStatus); 
-        // setShowResults(true); // Let handleFinishQuiz control this to avoid race conditions
+        setQuizResults(resultsWithAllStatus); // Ensure results from callback are also set
       },
       onTimeTick: (timeLeftInSeconds) => {
         setTimeLeft(timeLeftInSeconds);
@@ -76,7 +72,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
       onQuizTimeUp: async () => {
         console.log("Quiz Time Up (via callback)!");
         alert("Time's up!");
-        await handleFinishQuiz(); 
+        await handleFinishQuiz();
       }
     };
 
@@ -97,11 +93,12 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
         engineRef.current = null;
       }
     };
-  }, [quizConfig, handleFinishQuiz]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizConfig]); 
 
 
   const handleAnswerChange = useCallback((answer: UserAnswerType) => {
-    setUserAnswer(answer); 
+    setUserAnswer(answer);
     if (engineRef.current && currentQuestion) {
       engineRef.current.submitAnswer(currentQuestion.id, answer);
     }
@@ -118,7 +115,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
 
   const handleNext = () => navigate('next');
   const handlePrev = () => navigate('prev');
-  
+
   const handleRestartQuiz = useCallback(async () => {
     if (engineRef.current) {
         engineRef.current.destroy();
@@ -138,7 +135,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
                  setUserAnswer(null);
             }
         },
-        onAnswerSubmit: (question, answer) => { 
+        onAnswerSubmit: (question, answer) => {
            console.log(`(Restart) Answer Submitted (via callback) for Q ID:${question.id}`, answer);
         },
         onQuizFinish: (resultsWithAllStatus) => {
@@ -164,8 +161,8 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
 
   if (showResults && quizResults && quizConfig) {
     return (
-        <QuizResult 
-            result={quizResults} 
+        <QuizResult
+            result={quizResults}
             quizConfig={quizConfig}
             onRestartQuiz={handleRestartQuiz}
             onLoadNewQuiz={onExitQuiz}
@@ -181,7 +178,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
       </Card>
     );
   }
-  
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -196,7 +193,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
         )}
         {quizConfig.description && <p className="text-slate-300 mb-4">{quizConfig.description}</p>}
          {timeLeft !== null && (
-          <div className={`text-right font-semibold mb-4 text-lg ${timeLeft <= 60 ? 'text-red-500 animate-pulse' : 'text-sky-400'}`}>
+          <div className={`text-right font-semibold mb-4 text-lg ${timeLeft <= 60 && timeLeft > 0 ? 'text-red-500 animate-pulse' : (timeLeft === 0 ? 'text-red-500' : 'text-sky-400')}`}>
             Time Left: {formatTime(timeLeft)}
           </div>
         )}
@@ -220,7 +217,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizConfig, onQuizComple
         >
           Previous
         </Button>
-        
+
         {quizEngine.isQuizFinished() ? (
            <Button onClick={handleFinishQuiz} variant="primary" size="lg">
             Finish Quiz

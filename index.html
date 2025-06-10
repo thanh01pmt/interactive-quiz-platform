@@ -1,23 +1,67 @@
+
 <script type="importmap">
-{
-  "imports": {
-    "@rollup/plugin-typescript": "https://esm.sh/@rollup/plugin-typescript@^12.1.2",
-    "@rollup/plugin-commonjs": "https://esm.sh/@rollup/plugin-commonjs@^28.0.3",
-    "@rollup/plugin-node-resolve": "https://esm.sh/@rollup/plugin-node-resolve@^16.0.1",
-    "@rollup/plugin-terser": "https://esm.sh/@rollup/plugin-terser@^0.4.4",
-    "rollup-plugin-dts": "https://esm.sh/rollup-plugin-dts@^6.2.1",
-    "rollup-plugin-postcss": "https://esm.sh/rollup-plugin-postcss@^4.0.2",
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-    "react/": "https://esm.sh/react@^19.1.0/",
-    "react": "https://esm.sh/react@^19.1.0",
-    "vite": "https://esm.sh/vite@^6.3.5",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.5.1",
-    "jszip": "https://esm.sh/jszip@3.10.1",
-    "@google/genai": "https://esm.sh/@google/genai@^0.14.2",
-    "vitest/": "https://esm.sh/vitest@^3.2.2/",
-    "vitest": "https://esm.sh/vitest@^3.2.2"
+  {
+    "imports": {
+      "@rollup/plugin-typescript": "https://esm.sh/@rollup/plugin-typescript@^12.1.2",
+      "@rollup/plugin-commonjs": "https://esm.sh/@rollup/plugin-commonjs@^28.0.3",
+      "@rollup/plugin-node-resolve": "https://esm.sh/@rollup/plugin-node-resolve@^16.0.1",
+      "@rollup/plugin-terser": "https://esm.sh/@rollup/plugin-terser@^0.4.4",
+      "rollup-plugin-dts": "https://esm.sh/rollup-plugin-dts@^6.2.1",
+      "rollup-plugin-postcss": "https://esm.sh/rollup-plugin-postcss@^4.0.2",
+      "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+      "react/": "https://esm.sh/react@^19.1.0/",
+      "react": "https://esm.sh/react@^19.1.0",
+      "vite": "https://esm.sh/vite@^6.3.5",
+      "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.5.1",
+      "jszip": "https://esm.sh/jszip@3.10.1",
+      "@google/genai": "https://esm.sh/@google/genai@^0.14.2",
+      "vitest/": "https://esm.sh/vitest@^3.2.2/",
+      "vitest": "https://esm.sh/vitest@^3.2.2"
+    }
   }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-<script type="module" src="/index.tsx"></script>
+  </script>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="example/public/blockly-styles.css"> <!-- Adjusted path assuming it's relative to project root and example app is served -->
+    <style>
+      body {
+        font-family: 'Inter', sans-serif; /* Assuming Inter is available or falls back */
+        margin: 0;
+      }
+       /* Custom scrollbar for webkit browsers */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #2d3748; /* slate-800 */ }
+      ::-webkit-scrollbar-thumb { background: #4a5568; /* slate-600 */ border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #718096; /* slate-500 */ }
+      
+      /* Blockly Dark Theme (copied from example/public/blockly-styles.css for root app context) */
+      /* It's better if this is served from a static asset, but embedding for completeness if no server */
+      .blocklyToolboxDiv { background-color: #2d3748 !important; border-right: 1px solid #4a5568 !important; }
+      .blocklyFlyout { background-color: #1e293b !important; }
+      .blocklyMainBackground { fill: #1e293b !important; }
+      /* ... other dark theme styles from blockly-styles.css ... */
+      .blocklyScrollbarBackground { fill: #4a5568 !important; }
+      .blocklyScrollbarHandle { fill: #718096 !important; }
+      .blocklyZoom > image, .blocklyTrash > image { filter: invert(1) hue-rotate(180deg); opacity: 0.8; }
+      .blocklyZoom > .blocklyZoomPlusButton, .blocklyZoom > .blocklyZoomMinusButton, .blocklyZoom > .blocklyZoomResetButton { fill: #cbd5e1 !important; stroke: #4a5568 !important; }
+      .blocklyTreeRow { color: #e2e8f0 !important; white-space: nowrap !important; }
+      .blocklyTreeRow:hover { background-color: #4a5568 !important; }
+      .blocklyTreeRowSelected { background-color: #38bdf8 !important; color: white !important; }
+      .blocklyGridPattern { stroke: #374151 !important; }
+  
+      /* Minified Blockly Core CSS (essential parts, from blockly-styles.css) */
+      .blocklyAccessibleText,.blocklyHidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px)}.blocklyBlockDragSurface{display:none;position:absolute;top:0;left:0;right:0;bottom:0;overflow:visible!important;z-index:50}.blocklyBlockCanvas.blocklyCanvasTranslate{transform:translateZ(0)}.blocklyTooltipDiv{background-color:#ffffc7;border:1px solid #ddc;box-shadow:4px 4px 2px grey;color:#000;display:none;font-family:sans-serif;font-size:9pt;padding:2px;position:absolute;z-index:100000}.blocklyDropDownDiv{position:fixed;left:0;top:0;z-index:1000;display:none;border:.5px solid;border-color:#dadce0;background-color:#fff;border-radius:2px;padding:4px;box-shadow:0 0 3px 1px rgb(0 0 0 / .3)}.blocklyDropDownContent{max-height:300px;overflow-x:hidden;overflow-y:auto;position:relative}.blocklyDropDownArrow{position:absolute;left:0;top:0;width:16px;height:16px;z-index:1;background-color:inherit;border-color:inherit}.blocklySelected>.blocklyPath{stroke:#fc3;stroke-width:3px}.blocklyDraggable{cursor:url("media/handopen.cur"),auto;cursor:grab;cursor:-webkit-grab}.blocklyDragging{cursor:url("media/handclosed.cur"),auto;cursor:grabbing;cursor:-webkit-grabbing}.blocklyDragging>.blocklyPath,.blocklyDragging>.blocklyPathLight,.blocklyDragging>.blocklyPathDark{fill-opacity:.8;stroke-opacity:.8}.blocklyDragging>.blocklyPathDark{display:none}.blocklyDisabled>.blocklyPath{fill-opacity:.5;stroke-opacity:.5}.blocklyDisabled>.blocklyPathLight{display:none}.blocklyDisabled>.blocklyPathDark{display:block}.blocklyInsertionMarker>.blocklyPath{fill-opacity:.2;stroke:none}.blocklyPathLight{fill:none;stroke-linecap:round;stroke-width:1}.blocklyPathDark{fill:none;stroke-linecap:round;stroke-width:2}
+      .blocklyText{cursor:default;fill:#fff;font-family:sans-serif;font-size:11pt}.blocklyText tspan{fill:#fff}
+    </style>
+  </head>
+  <body class="bg-slate-900 text-slate-100">
+    <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+  </body>
+  </html>
+  

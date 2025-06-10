@@ -54,7 +54,7 @@ export const SequenceQuestionUI: React.FC<SequenceQuestionUIProps> = ({
   const handleDragOver = (e: React.DragEvent<HTMLLIElement>, targetItemId: string) => {
     e.preventDefault();
     if (showCorrectAnswer || !draggedItemId || draggedItemId === targetItemId) return;
-    
+
     const draggedItemIndex = sequencedItems.findIndex(item => item.id === draggedItemId);
     const targetItemIndex = sequencedItems.findIndex(item => item.id === targetItemId);
 
@@ -76,7 +76,7 @@ export const SequenceQuestionUI: React.FC<SequenceQuestionUIProps> = ({
     onAnswerChange(newAnswer);
     setDraggedItemId(null);
   };
-  
+
   const handleDragEnd = () => {
     if (showCorrectAnswer) return;
     // Ensure onAnswerChange is called even if drop target wasn't an item (e.g. dropped outside)
@@ -89,18 +89,20 @@ export const SequenceQuestionUI: React.FC<SequenceQuestionUIProps> = ({
   return (
     <div className="space-y-2">
       <p className="text-sm text-slate-400 mb-2">Drag and drop the items into the correct order.</p>
-      <ul 
+      <ul
         className="list-none p-0 m-0"
-        onDragOver={(e) => e.preventDefault()} 
-        onDrop={handleDrop} 
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
+        role="listbox"
+        aria-label="Sortable list of items. Drag to reorder."
       >
         {sequencedItems.map((item, index) => {
           let itemStyle = 'bg-slate-700 hover:bg-slate-600';
-          let orderIndicator: string | React.ReactNode = `#${index + 1}`; 
-          let isCorrectPosition = false; 
+          let orderIndicator: string | React.ReactNode = `#${index + 1}`;
+          let isCorrectPosition = false;
 
           if (showCorrectAnswer) {
-            isCorrectPosition = question.correctOrder[index] === item.id; 
+            isCorrectPosition = question.correctOrder[index] === item.id;
             const originalCorrectItem = question.items.find(i => i.id === question.correctOrder[index]);
 
             if (isCorrectPosition) {
@@ -129,10 +131,14 @@ export const SequenceQuestionUI: React.FC<SequenceQuestionUIProps> = ({
               draggable={!showCorrectAnswer}
               onDragStart={(e) => handleDragStart(e, item.id)}
               onDragOver={(e) => handleDragOver(e, item.id)}
-              onDrop={handleDrop} 
+              onDrop={handleDrop}
               onDragEnd={handleDragEnd}
               className={`p-3 my-1.5 rounded-md shadow ${itemStyle} ${!showCorrectAnswer ? 'cursor-grab active:cursor-grabbing' : 'opacity-90'} transition-all duration-150 ease-in-out ${draggedItemId === item.id ? 'opacity-50 scale-105' : ''}`}
+              tabIndex={0}
+              role="option"
               aria-roledescription="sortable item"
+              aria-grabbed={draggedItemId === item.id}
+              aria-label={`${item.content}, current position ${index + 1}`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-slate-100">{item.content}</span>

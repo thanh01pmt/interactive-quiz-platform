@@ -30,7 +30,7 @@ const loadScript = (src: string, async = true): Promise<void> => {
 
 const loadBlocklyScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (typeof (window as any).Blockly?.Blocks !== 'undefined' && 
+    if (typeof (window as any).Blockly?.Blocks !== 'undefined' &&
         typeof (window as any).Blockly?.JavaScript !== 'undefined') {
       console.log("Blockly already fully loaded.");
       resolve();
@@ -48,7 +48,7 @@ const loadBlocklyScript = (): Promise<void> => {
       {
         name: 'unpkg',
         mainSrc: 'https://unpkg.com/blockly@9.0.0/blockly.min.js',
-        blocksSrc: 'https://unpkg.com/blockly@9.0.0/blocks.min.js', 
+        blocksSrc: 'https://unpkg.com/blockly@9.0.0/blocks.min.js',
         generatorSrc: 'https://unpkg.com/blockly@9.0.0/javascript.min.js',
         mediaPath: 'https://unpkg.com/blockly@9.0.0/media/'
       },
@@ -56,7 +56,7 @@ const loadBlocklyScript = (): Promise<void> => {
         name: 'jsdelivr',
         mainSrc: 'https://cdn.jsdelivr.net/npm/blockly@9.0.0/blockly.min.js',
         blocksSrc: 'https://cdn.jsdelivr.net/npm/blockly@9.0.0/blocks.min.js',
-        generatorSrc: 'https://cdn.jsdelivr.net/npm/blockly@9.0.0/javascript.min.js', 
+        generatorSrc: 'https://cdn.jsdelivr.net/npm/blockly@9.0.0/javascript.min.js',
         mediaPath: 'https://cdn.jsdelivr.net/npm/blockly@9.0.0/media/'
       }
     ];
@@ -68,7 +68,7 @@ const loadBlocklyScript = (): Promise<void> => {
 
       const cdn = cdnOptions[cdnIndex];
       console.log(`Attempting to load Blockly from ${cdn.name}...`);
-      
+
       try {
         await loadScript(cdn.mainSrc);
         const BlocklyGlobal = (window as any).Blockly;
@@ -98,10 +98,10 @@ const loadBlocklyScript = (): Promise<void> => {
         if (typeof BlocklyGlobal.JavaScript === 'undefined') {
           throw new Error(`Blockly.JavaScript generator not found after loading JS generator script from ${cdn.name}.`);
         }
-        
+
         console.log(`Successfully loaded Blockly with Blocks and JavaScript generator from ${cdn.name}`);
         resolve(); // Resolve the main loadBlocklyScript promise
-        
+
       } catch (error) {
         console.warn(`Failed to load Blockly from ${cdn.name}:`, error);
         await tryLoadFromCDN(cdnIndex + 1); // Try next CDN
@@ -139,7 +139,7 @@ const useBlocklyLoader = () => {
 
   useEffect(() => {
     // Only attempt load if marked as loading, and not yet ready/failed
-    if (isLoading && !isReady && !loadError) { 
+    if (isLoading && !isReady && !loadError) {
       attemptLoad();
     }
   }, [isLoading, isReady, loadError, attemptLoad]);
@@ -171,7 +171,7 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
   const workspaceRef = useRef<any>(null);
   const [isInitializingComponent, setIsInitializingComponent] = useState(false);
   const [componentError, setComponentError] = useState<string | null>(null);
-  
+
   const { isLoading: blocklyLoading, loadError: blocklyLoadError, isReady: blocklyReady, retry } = useBlocklyLoader();
 
   const updateAnswer = useCallback(() => {
@@ -233,9 +233,9 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
           <category name="Functions" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
         </xml>
       `;
-      
+
       // Rely on CSS in index.html for dark theme, use Classic as base JS theme.
-      const themeToUse = LocalBlockly.Themes.Classic || undefined; 
+      const themeToUse = LocalBlockly.Themes.Classic || undefined;
 
       const workspace = LocalBlockly.inject(blocklyDivRef.current, {
         toolbox: toolbox,
@@ -244,9 +244,9 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
         readOnly: showCorrectAnswer,
         zoom: { controls: true, wheel: true, startScale: 0.9, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 },
         grid: { spacing: 20, length: 3, colour: '#374151', snap: true }, // Adjusted grid color for dark
-        theme: themeToUse 
+        theme: themeToUse
       });
-      
+
       workspaceRef.current = workspace;
       console.log("Blockly workspace injected.");
 
@@ -288,11 +288,11 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
               console.warn('Blockly or Blockly.Events not available in change listener callback for Blockly.');
               return;
             }
-            
+
             if (event.isUiEvent || event.type === CurrentBlockly.Events.VIEWPORT_CHANGE || event.group === 'drag') {
                 if(event.type === CurrentBlockly.Events.FINISHED_LOADING) {} else {return;}
             }
-            
+
             const significantEventTypes = [
               CurrentBlockly.Events.BLOCK_MOVE, CurrentBlockly.Events.BLOCK_CREATE,
               CurrentBlockly.Events.BLOCK_DELETE, CurrentBlockly.Events.BLOCK_CHANGE,
@@ -310,7 +310,7 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
         });
         console.log("Blockly change listener added.");
       }
-      
+
       setIsInitializingComponent(false);
       console.log("Blockly workspace initialization complete.");
     } catch (e) {
@@ -318,7 +318,7 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
       setComponentError(`Failed to initialize workspace: ${e instanceof Error ? e.message : String(e)}`);
       setIsInitializingComponent(false);
     }
-  }, [blocklyReady, question.id, question.toolboxDefinition, question.initialWorkspace, question.solutionWorkspaceXML, showCorrectAnswer, updateAnswer]); // Removed userAnswer from this dependency array
+  }, [blocklyReady, question.id, question.toolboxDefinition, question.initialWorkspace, question.solutionWorkspaceXML, showCorrectAnswer, updateAnswer]);
 
   useEffect(() => {
     if (blocklyReady && blocklyDivRef.current) {
@@ -338,8 +338,8 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
     };
   }, [blocklyReady, question.id, initializeBlocklyWorkspace]);
 
-  useEffect(() => { 
-    if (blocklyReady && workspaceRef.current && !showCorrectAnswer && 
+  useEffect(() => {
+    if (blocklyReady && workspaceRef.current && !showCorrectAnswer &&
         typeof userAnswer === 'string' && userAnswer.trim().startsWith('<xml')) {
       const LocalBlockly = (window as any).Blockly;
       if (!LocalBlockly?.Xml || !workspaceRef.current) return;
@@ -349,7 +349,7 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
         const currentWorkspaceXML = LocalBlockly.Xml.domToText(LocalBlockly.Xml.workspaceToDom(workspaceRef.current));
         if (currentWorkspaceXML !== userAnswer) {
           console.log(`External userAnswer changed for Blockly question ${question.id}, reloading workspace XML.`);
-          LocalBlockly.Xml.clearWorkspace(workspaceRef.current); 
+          LocalBlockly.Xml.clearWorkspace(workspaceRef.current);
           const dom = LocalBlockly.Xml.textToDom(userAnswer);
           LocalBlockly.Xml.domToWorkspace(dom, workspaceRef.current);
           if (workspaceRef.current.scrollCenter && typeof workspaceRef.current.scrollCenter === 'function') {
@@ -383,6 +383,7 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
   }, [blocklyReady]);
 
   const workspaceHeight = showCorrectAnswer ? '350px' : '500px';
+  const workspaceContainerId = `blockly-workspace-container-${question.id}`;
 
   if (blocklyLoading) {
     return (
@@ -405,13 +406,13 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
             <p className="font-semibold text-lg">Failed to load Blockly</p>
             <p className="text-sm mt-2 mb-3">{blocklyLoadError}</p>
             <div className="space-x-2">
-              <button 
+              <button
                 onClick={retry}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               >
                 Try Again
               </button>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
               >
@@ -423,34 +424,36 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
       </div>
     );
   }
-  
+
   return (
     <div className="space-y-4">
-      <div 
-        ref={blocklyDivRef} 
-        style={{ 
-          height: workspaceHeight, 
-          width: '100%', 
-          borderRadius: '8px', 
+      <div
+        id={workspaceContainerId}
+        ref={blocklyDivRef}
+        style={{
+          height: workspaceHeight,
+          width: '100%',
+          borderRadius: '8px',
           border: `1px solid ${componentError ? '#ef4444' : '#4A5568'}`,
           backgroundColor: '#1E293B',
           position: 'relative'
-        }} 
+        }}
+        aria-label={`Blockly programming workspace for question: ${question.prompt}`}
       >
         {blocklyReady && isInitializingComponent && !componentError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-85 rounded-md z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-85 rounded-md z-10" aria-live="polite">
             <div className="text-center">
               <p className="text-slate-300 text-lg animate-pulse mb-2">Initializing Workspace...</p>
               <div className="w-6 h-6 border-4 border-slate-600 border-t-slate-300 rounded-full animate-spin mx-auto"></div>
             </div>
           </div>
         )}
-        
+
         {componentError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-red-900 bg-opacity-85 rounded-md p-4 z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-red-900 bg-opacity-85 rounded-md p-4 z-10" role="alert">
             <div className="text-center">
               <p className="text-red-200 text-sm mb-3">Workspace Error: {componentError}</p>
-              <button 
+              <button
                 onClick={initializeBlocklyWorkspace}
                 className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
               >
@@ -459,14 +462,14 @@ export const BlocklyProgrammingQuestionUI: React.FC<BlocklyProgrammingQuestionUI
             </div>
           </div>
         )}
-        
+
         {!workspaceRef.current && blocklyReady && !blocklyLoading && !blocklyLoadError && !componentError && !isInitializingComponent && (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center" aria-live="polite">
             <p className="text-slate-500">Preparing Blockly workspace area...</p>
           </div>
         )}
       </div>
-      
+
       {showCorrectAnswer && question.solutionWorkspaceXML && userAnswer !== question.solutionWorkspaceXML && !componentError && !isInitializingComponent && (
         <div className="mt-2 p-3 bg-slate-700 rounded-md">
           <h4 className="font-semibold text-sky-300">Note:</h4>
