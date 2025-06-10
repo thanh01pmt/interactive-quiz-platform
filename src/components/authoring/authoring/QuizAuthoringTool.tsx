@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import type { QuizConfig, QuizQuestion, QuestionTypeStrings } from '../../types';
+import type { QuizConfig, QuizQuestion, QuestionTypeStrings } from '../../../../types';
 import { Button } from '../shared/Button';
 import { Card } from '../shared/Card';
 import { QuizSettingsForm } from './QuizSettingsForm';

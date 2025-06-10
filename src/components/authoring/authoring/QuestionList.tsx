@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import type { QuizQuestion, QuestionTypeStrings } from '../../types';
+import type { QuizQuestion, QuestionTypeStrings } from '../../../../types';
 import { Button } from '../shared/Button';
 
 interface QuestionListProps {

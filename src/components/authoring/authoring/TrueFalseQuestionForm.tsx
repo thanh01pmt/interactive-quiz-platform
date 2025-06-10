@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { TrueFalseQuestion, BaseQuestion } from '../../types';
+import { TrueFalseQuestion, BaseQuestion } from '../../../../types';
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
 
 interface TrueFalseQuestionFormProps {

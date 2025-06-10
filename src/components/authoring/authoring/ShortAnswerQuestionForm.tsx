@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ShortAnswerQuestion, BaseQuestion } from '../../types';
+import { ShortAnswerQuestion, BaseQuestion } from '../../../../types';
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
 import { Button } from '../shared/Button';
 

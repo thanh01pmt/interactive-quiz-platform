@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BaseQuestion } from '../../types';
+import { BaseQuestion } from '../../../../types';
 
 interface BaseQuestionFormFieldsProps {
   // Allow Partial<BaseQuestion> but only operate on core fields for this shared component

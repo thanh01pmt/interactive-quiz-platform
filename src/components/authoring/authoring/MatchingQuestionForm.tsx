@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MatchingQuestion, MatchPromptItem, MatchOptionItem, BaseQuestion } from '../../types';
+import { MatchingQuestion, MatchPromptItem, MatchOptionItem, BaseQuestion } from '../../../../types';
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
 import { Button } from '../shared/Button';
 import { generateUniqueId } from '../../utils/idGenerators';

@@ -1,5 +1,5 @@
 
-import type { QuizQuestion, QuestionTypeStrings, BaseQuestion } from '../../types';
+import type { QuizQuestion, QuestionTypeStrings, BaseQuestion } from '../../../../types';
 import { generateUniqueId } from '../../utils/idGenerators';
 
 // This helper creates the common part of a question.

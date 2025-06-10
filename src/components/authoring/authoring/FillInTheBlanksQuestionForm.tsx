@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { FillInTheBlanksQuestion, BaseQuestion } from '../../types';
+import { FillInTheBlanksQuestion, BaseQuestion } from '../../../../types';
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
 import { Button } from '../shared/Button';
 import { generateUniqueId } from '../../utils/idGenerators';

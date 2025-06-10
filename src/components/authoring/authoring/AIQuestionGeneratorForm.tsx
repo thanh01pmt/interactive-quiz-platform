@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import type { QuestionTypeStrings } from '../../types';
+import type { QuestionTypeStrings } from '../../../../types';
 import { Button } from '../shared/Button';
 
 export interface AIQuestionFormState {

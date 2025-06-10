@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { QuizSettings, QuizConfig } from '../../types';
+import { QuizSettings, QuizConfig } from '../../../../types';
 import { Button } from '../shared/Button'; // Assuming Button is shared
 
 interface QuizSettingsFormProps {

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MultipleResponseQuestion, BaseQuestion } from '../../types';
+import { MultipleResponseQuestion, BaseQuestion } from '../../../../types';
 import { BaseQuestionFormFields } from './BaseQuestionFormFields';
 import { Button } from '../shared/Button';
 import { generateUniqueId } from '../../utils/idGenerators';

@@ -11,7 +11,7 @@ import {
     SequenceQuestion,
     MatchingQuestion
     // Import other question types as their forms are created
-} from '../../types';
+} from '../../../../types';
 import { Button } from '../shared/Button';
 import { Card } from '../shared/Card';
 import { TrueFalseQuestionForm } from './TrueFalseQuestionForm';
